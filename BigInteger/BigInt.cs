@@ -27,11 +27,24 @@ namespace bigInteger
 
         public  BigInt Multiplication(BigInt f, BigInt s)
         {
+            if (f.arr.Count == 1 && f.arr.First.Value== 0 ||
+           s.arr.Count == 1 && s.arr.First.Value == 0)
+            {
+                return new BigInt("0");
+            }
+
+            if (f.arr.Count == 1 && s.arr.Count == 1)
+            {
+                int product = f.arr.First.Value * s.arr.First.Value;
+                return new BigInt(product.ToString());
+            }
+
+
             int n = Math.Max(f.arr.Count, s.arr.Count);
 
-            if (f.arr.Count< s.arr.Count)
+            if (f.arr.Count < s.arr.Count)
                 AddZerosFirst(ref f, s.arr.Count - f.arr.Count);
-            else
+            else if (s.arr.Count < f.arr.Count)
                 AddZerosFirst(ref s, f.arr.Count - s.arr.Count);
 
             BigInt a = new BigInt();
@@ -41,24 +54,21 @@ namespace bigInteger
             BigInt d = new BigInt();
             SplitBigInt(s, ref c, ref d);
 
-            //BigInt  power= new BigInt((Math.Pow(10, n / 2)).ToString());
-
-            BigInt x =AddZerosLast(a,n/2);
-            x= sum(x,b);
-
-            BigInt y = AddZerosLast(c, n / 2);
-            y= sum (y,d);
-
-
-            BigInt ac = Multiplication(a, c);
+            BigInt ac= Multiplication(a, c);
             BigInt bd = Multiplication(b, d);
             BigInt a_plus_b = sum(a, b);
             BigInt c_plus_d = sum(c, d);
-            BigInt ad_Mult_bc = Multiplication(a_plus_b,c_plus_d);
+            BigInt a_plus_b_Mult_c_plus_d = Multiplication(a_plus_b, c_plus_d);
+            BigInt ad_Plus_bc = subtract( subtract(a_plus_b_Mult_c_plus_d, ac),bd);
+
+            BigInt result1 = AddZerosLast(ref ac, (n / 2) * 2); // shift ac by 2 * (n/2)
+            BigInt result2 = AddZerosLast(ref ad_Plus_bc, n / 2); // shift ad+bc by (n/2)
 
 
+            BigInt finalResult = sum(result1, result2);
+            finalResult = sum(finalResult, bd);
+            return finalResult;
 
-            return x;
         }
 
 
@@ -69,7 +79,7 @@ namespace bigInteger
                 n.arr.AddFirst(0);
             }
         }
-        BigInt AddZerosLast(BigInt n, int count)
+        BigInt AddZerosLast(ref BigInt n, int count)
         {
             for (int i = 0; i < count; i++)
             {
@@ -79,7 +89,7 @@ namespace bigInteger
         }
         void SplitBigInt(BigInt n, ref BigInt a, ref BigInt b)
         {
-            Int128 mid = n.arr.Count / 2;
+            int mid = n.arr.Count- n.arr.Count / 2;
             LinkedListNode<int> p = n.arr.First;
             for (Int128 i = 0; i < mid; i++)
             {
@@ -92,10 +102,6 @@ namespace bigInteger
                 p = p.Next;
             }
         }
-
-
-
-
 
         public static BigInt sum(BigInt n, BigInt m)
         {
