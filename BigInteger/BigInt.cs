@@ -194,52 +194,53 @@ namespace bigInteger
             return sum;
         }
 
-public static BigInt divide(BigInt dividend, BigInt divisor)
-{
-    // Handle division by zero
-    if (divisor.arr.Count == 0 || divisor.ToString() == "0")
-        throw new DivideByZeroException("Cannot divide by zero.");
-
-    // Early exit cases
-    if (compare(dividend, divisor) < 0)
-        return new BigInt("0");
-    if (compare(dividend, divisor) == 0)
-        return new BigInt("1");
-
-    BigInt quotient = new BigInt();
-    BigInt remainder = new BigInt("0");
-
-    // Iterate over each digit in the dividend (left to right)
-    var currentDigitNode = dividend.arr.First;
-    while (currentDigitNode != null)
-    {
-        // Bring down the next digit
-        remainder.arr.AddLast(currentDigitNode.Value);
-        remainder.removeLeadingZeros();
-
-        // Skip if remainder is still smaller than divisor
-        if (compare(remainder, divisor) < 0)
+        public static (BigInt Quotient, BigInt Remainder) divide(BigInt dividend, BigInt divisor)
         {
-            quotient.arr.AddLast(0); // Append 0 to quotient
-            currentDigitNode = currentDigitNode.Next;
-            continue;
+            // Handle division by zero
+            if (divisor.arr.Count == 0 || divisor.ToString() == "0")
+                throw new DivideByZeroException("Cannot divide by zero.");
+
+            // Early exit cases
+            if (compare(dividend, divisor) < 0)
+                return (new BigInt("0"), new BigInt(dividend.ToString()));
+            if (compare(dividend, divisor) == 0)
+                return (new BigInt("1"), new BigInt("0"));
+
+            BigInt quotient = new BigInt();
+            BigInt remainder = new BigInt("0");
+
+            // Iterate over each digit in the dividend (left to right)
+            var currentDigitNode = dividend.arr.First;
+            while (currentDigitNode != null)
+            {
+                // Bring down the next digit
+                remainder.arr.AddLast(currentDigitNode.Value);
+                remainder.removeLeadingZeros();
+
+                // Skip if remainder is still smaller than divisor
+                if (compare(remainder, divisor) < 0)
+                {
+                    quotient.arr.AddLast(0); // Append 0 to quotient
+                    currentDigitNode = currentDigitNode.Next;
+                    continue;
+                }
+
+                // Subtract divisor from remainder as many times as possible
+                int count = 0;
+                while (compare(remainder, divisor) >= 0)
+                {
+                    remainder = subtract(remainder, divisor);
+                    count++;
+                }
+
+                quotient.arr.AddLast(count); // Append count to quotient
+                currentDigitNode = currentDigitNode.Next;
+            }
+
+            quotient.removeLeadingZeros();
+            return (quotient,remainder);
         }
 
-        // Subtract divisor from remainder as many times as possible
-        int count = 0;
-        while (compare(remainder, divisor) >= 0)
-        {
-            remainder = subtract(remainder, divisor);
-            count++;
-        }
-
-        quotient.arr.AddLast(count); // Append count to quotient
-        currentDigitNode = currentDigitNode.Next;
-    }
-
-    quotient.removeLeadingZeros();
-    return quotient;
-}
 public static int compare(BigInt a, BigInt b)
 {
     a.removeLeadingZeros();
