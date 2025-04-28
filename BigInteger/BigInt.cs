@@ -39,20 +39,36 @@ namespace bigInteger
                 return false;
             }
         }
-            static BigInt Power(BigInt x, BigInt n)
+
+        public static void RemoveFrontZeros(ref BigInt n)
         {
-            if (n.arr.Count == 0 || n.arr.First == null) // we need to make sure of this condition
+            LinkedListNode<int> p = n.arr.First;
+            while (n.arr.Count > 1 && n.arr.First.Value== 0)
+            {
+                n.arr.RemoveFirst();   
+            }
+           
+        }
+        
+        public static BigInt Power(BigInt x, BigInt n)
+        {
+            if (n.arr.Count == 0 || n.ToString() == "0") // we need to make sure of this condition
             {
                 return new BigInt("1");
             }
             if (isEven(n))
             {
-                BigInt half = Power(x, divide(n, new BigInt("2")));
+                BigInt half = Power(x, divide(n, new BigInt("2")).Quotient);
+                RemoveFrontZeros(ref half);
+
                 return (Multiplication(half, half));
             }
             else
             {
-                return Multiplication(x, Power(x, subtract(n, new BigInt("1"))));
+                BigInt result = Multiplication(x, Power(x, subtract(n, new BigInt("1"))));
+                RemoveFrontZeros(ref result);
+
+                return result;
             }
 
         }

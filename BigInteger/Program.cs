@@ -56,6 +56,26 @@ namespace bigInteger
             PerformanceTest("12345678901234567890", "98765432109876543210");
             PerformanceTest("57329817389217483219843341245621641542354235423543254325",
                           "55435432543729845789275437297438547543254325432543254344");
+
+
+
+
+            // ========== POWER TEST CASES ==========
+            Console.WriteLine("\n=== POWER TESTS ===");
+            TestPower("2", "3", "8");
+            TestPower("5", "0", "1");       // anything^0 = 1
+            TestPower("7", "1", "7");
+            TestPower("10", "2", "100");
+            TestPower("12", "3", "1728");
+            TestPower("123", "2", "15129");
+            TestPower("999", "3", "997002999");
+            TestPower("123456789", "2", "15241578750190521");
+            TestPower("3", "10", "59049");
+            TestPower("57329817389217483219843341245621641542354235423543254325", "1",
+                      "57329817389217483219843341245621641542354235423543254325"); // power of 1 (identity)
+
+
+
         }
 
         static void TestAddition(string num1, string num2, string expected)
@@ -75,8 +95,15 @@ namespace bigInteger
 
         static void TestDivision(string num1, string num2, string expected)
         {
-            TestOperation(num1, num2, expected, (a, b) => BigInt.divide(a, b), "÷");
+            TestOperation(num1, num2, expected, (a, b) => BigInt.divide(a, b).Quotient, "÷");
         }
+        // Add this function after TestDivision
+        static void TestPower(string baseNum, string exponentNum, string expected)
+        {
+            TestOperation(baseNum, exponentNum, expected, (a, b) => BigInt.Power(a, b), "^");
+        }
+
+
 
         static void TestOperation(string num1, string num2, string expected,
                                 Func<BigInt, BigInt, BigInt> operation, string opSymbol)
@@ -138,6 +165,16 @@ namespace bigInteger
             sw.Stop();
             Console.WriteLine($"Multiplication: {sw.ElapsedMilliseconds} ms");
             Console.WriteLine($"Result length: {product.arr.Count} digits");
+
+
+            // inside PerformanceTest
+            // Power test
+            sw.Start();
+            BigInt powResult = BigInt.Power(a, new BigInt("5"));  // moderate exponent, not too big
+            sw.Stop();
+            Console.WriteLine($"Power (exp=5): {sw.ElapsedMilliseconds} ms");
+            Console.WriteLine($"Power Result length: {powResult.arr.Count} digits");
+
         }
     }
 }
