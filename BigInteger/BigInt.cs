@@ -103,14 +103,14 @@ namespace bigInteger
         }
 
 
-        void AddZerosFirst(ref BigInt n, int count)
+        static void AddZerosFirst(ref BigInt n, int count)
         {
             for (int i = 0; i < count; i++)
             {
                 n.arr.AddFirst(0);
             }
         }
-        BigInt AddZerosLast(ref BigInt n, int count)
+        static BigInt AddZerosLast(ref BigInt n, int count)
         {
             for (int i = 0; i < count; i++)
             {
@@ -118,7 +118,7 @@ namespace bigInteger
             }
             return n;
         }
-        void SplitBigInt(BigInt n, ref BigInt a, ref BigInt b)
+        static void SplitBigInt(BigInt n, ref BigInt a, ref BigInt b)
         {
             int mid = n.arr.Count- n.arr.Count / 2;
             LinkedListNode<int> p = n.arr.First;
@@ -287,14 +287,14 @@ public void removeLeadingZeros()
             return true;
         }
 
-        public BigInt encrypt(BigInt num,BigInt key,BigInt mod)
-        {
-            return Power(num, key) % mod;
-        }
-        public BigInt decrypt(BigInt fnum, BigInt key, BigInt mod)
-        {
-            return Power(fnum, key) % mod;
-        }
+        //public BigInt encrypt(BigInt num,BigInt key,BigInt mod)
+        //{
+        //   // return Power(num, key) % mod;
+        //}
+        //public BigInt decrypt(BigInt fnum, BigInt key, BigInt mod)
+        //{
+        //    return Power(fnum, key) % mod;
+        //}
 
 
 

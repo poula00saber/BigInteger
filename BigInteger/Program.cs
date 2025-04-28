@@ -70,7 +70,7 @@ namespace bigInteger
 
         static void TestMultiplication(string num1, string num2, string expected)
         {
-            TestOperation(num1, num2, expected, (a, b) => a.Multiplication(a, b), "×");
+            TestOperation(num1, num2, expected, (a, b) => BigInt.Multiplication(a, b), "×");
         }
 
         static void TestDivision(string num1, string num2, string expected)
@@ -134,7 +134,7 @@ namespace bigInteger
 
             // Multiplication test
             sw.Start();
-            BigInt product = a.Multiplication(a, b);
+            BigInt product = BigInt.Multiplication(a, b);
             sw.Stop();
             Console.WriteLine($"Multiplication: {sw.ElapsedMilliseconds} ms");
             Console.WriteLine($"Result length: {product.arr.Count} digits");
