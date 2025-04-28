@@ -22,10 +22,41 @@ namespace bigInteger
             arr = new LinkedList<int>();
         }
 
+        public static bool isEven(BigInt n)
+        {
 
+            LinkedListNode<int> lastN = n.arr.Last;
+            try
+            {
+                if (lastN == null)
+                {
+                    return false;
+                }
+                return (lastN.Value % 2 == 0);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+            static BigInt Power(BigInt x, BigInt n)
+        {
+            if (n.arr.Count == 0 || n.arr.First == null) // we need to make sure of this condition
+            {
+                return new BigInt("1");
+            }
+            if (isEven(n))
+            {
+                BigInt half = Power(x, divide(n, new BigInt("2")));
+                return (Multiplication(half, half));
+            }
+            else
+            {
+                return Multiplication(x, Power(x, subtract(n, new BigInt("1"))));
+            }
 
-
-        public  BigInt Multiplication(BigInt f, BigInt s)
+        }
+        public static  BigInt Multiplication(BigInt f, BigInt s)
         {
             if (f.arr.Count == 1 && f.arr.First.Value== 0 ||
            s.arr.Count == 1 && s.arr.First.Value == 0)
@@ -35,7 +66,7 @@ namespace bigInteger
 
             if (f.arr.Count == 1 && s.arr.Count == 1)
             {
-                int product = f.arr.First.Value * s.arr.First.Value;
+                Int128 product = f.arr.First.Value * s.arr.First.Value;
                 return new BigInt(product.ToString());
             }
 
@@ -256,7 +287,19 @@ public void removeLeadingZeros()
             return true;
         }
 
+        public BigInt encrypt(BigInt num,BigInt key,BigInt mod)
+        {
+            return Power(num, key) % mod;
+        }
+        public BigInt decrypt(BigInt fnum, BigInt key, BigInt mod)
+        {
+            return Power(fnum, key) % mod;
+        }
+
+
+
     }
+
 }
 
 
