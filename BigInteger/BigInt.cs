@@ -1,4 +1,6 @@
 
+using System;
+
 namespace bigInteger 
 {
    public class BigInt
@@ -298,22 +300,18 @@ public void removeLeadingZeros()
                 return false;
             }else{
                 p1 = p1.Previous;
-                p2 = p2.Previous;
-            }
-            }
+                p2 = p2.Prev
             return true;
         }
 
-        //public BigInt encrypt(BigInt num,BigInt key,BigInt mod)
-        //{
-        //   // return Power(num, key) % mod;
-        //}
-        //public BigInt decrypt(BigInt fnum, BigInt key, BigInt mod)
-        //{
-        //    return Power(fnum, key) % mod;
-        //}
-
-
+        public static BigInt encrypt(BigInt num, BigInt key, BigInt mod)
+        {
+             return divide( Power(num, key), mod).Remainder ;
+        }
+        public static BigInt decrypt(BigInt fnum, BigInt key, BigInt mod)
+        {
+            return divide(Power(fnum, key), mod).Remainder;
+        }
 
     }
 
