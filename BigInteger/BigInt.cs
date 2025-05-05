@@ -116,6 +116,7 @@ namespace bigInteger
 
             BigInt finalResult = sum(result1, result2);
             finalResult = sum(finalResult, bd);
+            RemoveFrontZeros(ref finalResult);
             return finalResult;
 
         }
