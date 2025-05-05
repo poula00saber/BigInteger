@@ -295,12 +295,18 @@ public void removeLeadingZeros()
             LinkedListNode<int> p1 = this.arr.Last;
             BigInt secondObj = (BigInt) obj;
             LinkedListNode<int> p2 = secondObj.arr.Last;
-            while(p1 != null && p2 != null){
-            if(p1.Value != p2.Value){
-                return false;
-            }else{
-                p1 = p1.Previous;
-                p2 = p2.Prev
+            while (p1 != null && p2 != null)
+            {
+                if (p1.Value != p2.Value)
+                {
+                    return false;
+                }
+                else
+                {
+                    p1 = p1.Previous;
+                    p2 = p2.Previous;
+                }
+            }
             return true;
         }
 
