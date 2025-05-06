@@ -424,7 +424,7 @@ namespace bigInteger
 
         private static Random rand = new Random();
 
-        public static (BigInt n, BigInt e, BigInt d) GeneratePublicKey(int digitSize = 3)
+        public static (BigInt n, BigInt e, BigInt d) GeneratePublicKey(int digitSize )
         {
             BigInt p = generateprime(digitSize);
             BigInt q = generateprime(digitSize);
@@ -444,8 +444,8 @@ namespace bigInteger
         private static BigInt generateprime(int digits)
         {
             // Define the range for the prime number
-            BigInt lowerBound = GetLowerBound(digits);
-            BigInt upperBound = GetUpperBound(digits);
+            BigInt lowerBound = lowerbound(digits);
+            BigInt upperBound = upperbound(digits);
 
             while (true)
             {
@@ -490,7 +490,7 @@ namespace bigInteger
             }
         }
 
-        private static BigInt GetLowerBound(int digits)
+        private static BigInt lowerbound(int digits)
         {
             string value = "1";
             for (int i = 1; i < digits; i++)
@@ -498,7 +498,7 @@ namespace bigInteger
             return new BigInt(value);
         }
 
-        private static BigInt GetUpperBound(int digits)
+        private static BigInt upperbound(int digits)
         {
             string value = "";
             for (int i = 0; i < digits; i++)
@@ -521,7 +521,7 @@ namespace bigInteger
 
             return true;
         }
-
+        //phi&&e
         private static BigInt GCD(BigInt a, BigInt b)
         {
             while (b.ToString() != "0")
