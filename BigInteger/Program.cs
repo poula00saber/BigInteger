@@ -9,6 +9,14 @@ namespace bigInteger
         {
             // Performance testing setup
             Stopwatch stopwatch = new Stopwatch();
+            Console.WriteLine("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
+            Console.WriteLine(BigInt.divide(new BigInt("2"), new BigInt("22")).Remainder);
+            Console.WriteLine(BigInt.divide(new BigInt("22"), new BigInt("2")).Remainder);
+
+            //  Console.WriteLine(BigInt.decrypt(new BigInt("746"), new BigInt("2563"), new BigInt("3713")));
+            Console.WriteLine("==== Public Key Generation &&Key Generation  ===");
+            Console.WriteLine("(N, e,d)");
+            Console.WriteLine(  BigInt.GeneratePublicKey());
 
             // ========== ADDITION TEST CASES ==========
             Console.WriteLine("=== ADDITION TESTS ===");
