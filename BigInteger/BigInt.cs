@@ -179,115 +179,135 @@ namespace bigInteger
             }
             return sum;
         }
+ public static (BigInt result, BigInt remain) divide(BigInt num, BigInt divisor)
+ {
+     if (divisor.ToString() == "0")
+     {
+         throw new ArithmeticException("Can't divide by zero");
+     }
+     if (compare(num, divisor) == 0)
+     {
+         return (new BigInt("1"), new BigInt("0"));
+     }
+     else if (compare(num, divisor) == -1)
+     {
+         return (new BigInt("0"), new BigInt(divisor.ToString()));
+     }
+     else
+     {
+         BigInt result = new BigInt();
+         BigInt remain = new BigInt("0");
+         LinkedListNode<int> currentDigit = num.arr.First;
+         while (currentDigit != null)
+         {
+             remain.arr.AddLast(currentDigit.Value);
+             if (compare(remain, divisor) == -1)
+             {
+                 result.arr.AddLast(0);
+                 currentDigit = currentDigit.Next;
+                 continue;
+             }
+             int divideCount = 0;
+             while (compare(remain, divisor) >= 0)
+             {
+                 remain = subtract(remain, divisor);
+                 divideCount++;
 
-        public static BigInt subtract(BigInt n, BigInt m)
+             }
+             result.arr.AddLast(divideCount);
+             currentDigit = currentDigit.Next;
+         }
+         return (result, remain);
+
+     }
+ 
+
+     static int compare(BigInt a, BigInt b)
+     {
+         removeLeadingZeroes(a);
+         removeLeadingZeroes(b);
+
+         if (a.arr.Count > b.arr.Count)
+          return 1;
+
+         else if (a.arr.Count < b.arr.Count) return -1;
+         else
+         {
+
+             LinkedListNode<int> n1= a.arr.First;
+             LinkedListNode<int> n2 = b.arr.First;
+             while (n1 != null || n2!=null)
+             {
+                 if (n1.Value > n2.Value) return 1;
+                 if (n1.Value < n2.Value) return -1;
+                 n1 = n1.Next;
+                 n2 = n2.Next;
+             }
+             return 0;
+
+         }
+     }
+ }
+public static BigInt subtract(BigInt x, BigInt y) {
+      LinkedListNode<int> num1 = x.arr.Last;
+      LinkedListNode<int> num2 = y.arr.Last;
+      BigInt result= new BigInt();
+      int borrow = 0;
+      while(num1 != null || num2!=null) 
+      {
+          int a, b;
+          if (num1!=null)
+          {
+              a=num1.Value;
+          }
+          else
+          {
+              a = 0;
+          }
+          if (num2 != null)
+          {
+              b = num2.Value;
+          }
+          else
+          {
+              b = 0;
+          }
+          int difference = a - b - borrow;
+          if (difference < 0)
+          {
+              difference = difference + 10;
+              borrow = 1;
+          }
+          else
+          {
+              borrow= 0;
+          }
+           result.arr.AddFirst(difference);
+          if (num1!=null)
+          {
+              num1 = num1.Previous;
+          }
+          if (num2 != null)
+          {
+              num2 = num2.Previous;
+          }
+
+
+      }
+
+      return result;
+  
+ }
+        
+        
+        public static void removeLeadingZeroes(BigInt num)
         {
-            LinkedListNode<int> lastN = n.arr.Last;
-            LinkedListNode<int> lastM = m.arr.Last;
-            int carry = 0;
-            BigInt sum = new BigInt();
-
-            while (lastN != null || lastM != null)
+            while (num.arr.First.Value==0)
             {
-                int a = (lastN != null) ? lastN.Value : 0;
-                int b = (lastM != null) ? lastM.Value : 0;
-
-                int s = a - b - carry; //correct logic
-
-                if (s < 0)//edited insted of multiplying it to return positive value, you should borrow
-                {
-                    s += 10;
-                    carry = 1;
-                }
-                else
-                {
-                    carry = 0;
-                }
-
-                sum.arr.AddFirst(s);//add number after sub
-
-                if (lastN != null) lastN = lastN.Previous;
-                if (lastM != null) lastM = lastM.Previous;
+                num.arr.RemoveFirst();
             }
-
-            sum.removeLeadingZeros(); //to remove unnessecary leading zeroes
-            return sum;
+          
         }
-
-        public static (BigInt Quotient, BigInt Remainder) divide(BigInt dividend, BigInt divisor)
-        {
-            // Handle division by zero
-            if (divisor.arr.Count == 0 || divisor.ToString() == "0")
-                throw new DivideByZeroException("Cannot divide by zero.");
-
-            // Early exit cases
-            if (compare(dividend, divisor) < 0)
-                return (new BigInt("0"), new BigInt(dividend.ToString()));
-            if (compare(dividend, divisor) == 0)
-                return (new BigInt("1"), new BigInt("0"));
-
-            BigInt quotient = new BigInt();
-            BigInt remainder = new BigInt("0");
-
-            // Iterate over each digit in the dividend (left to right)
-            var currentDigitNode = dividend.arr.First;
-            while (currentDigitNode != null)
-            {
-                // Bring down the next digit
-                remainder.arr.AddLast(currentDigitNode.Value);
-                remainder.removeLeadingZeros();
-
-                // Skip if remainder is still smaller than divisor
-                if (compare(remainder, divisor) < 0)
-                {
-                    quotient.arr.AddLast(0); // Append 0 to quotient
-                    currentDigitNode = currentDigitNode.Next;
-                    continue;
-                }
-
-                // Subtract divisor from remainder as many times as possible
-                int count = 0;
-                while (compare(remainder, divisor) >= 0)
-                {
-                    remainder = subtract(remainder, divisor);
-                    count++;
-                }
-
-                quotient.arr.AddLast(count); // Append count to quotient
-                currentDigitNode = currentDigitNode.Next;
-            }
-
-            quotient.removeLeadingZeros();
-            return (quotient, remainder);
-        }
-
-        public static int compare(BigInt a, BigInt b)
-        {
-            a.removeLeadingZeros();
-            b.removeLeadingZeros();
-
-            if (a.arr.Count > b.arr.Count) return 1;
-            if (a.arr.Count < b.arr.Count) return -1;
-
-            var n1 = a.arr.First;
-            var n2 = b.arr.First;
-            while (n1 != null)
-            {
-                if (n1.Value > n2.Value) return 1;
-                if (n1.Value < n2.Value) return -1;
-                n1 = n1.Next;
-                n2 = n2.Next;
-            }
-            return 0;
-        }
-        public void removeLeadingZeros()
-        {
-            while (arr.Count > 1 && arr.First.Value == 0)
-            {
-                arr.RemoveFirst();
-            }
-        }
-
 
         override public String ToString()
         {
