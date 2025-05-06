@@ -222,7 +222,9 @@ namespace bigInteger
      }
  
 
-     static int compare(BigInt a, BigInt b)
+    
+ }
+         public static int compare(BigInt a, BigInt b)
      {
          removeLeadingZeroes(a);
          removeLeadingZeroes(b);
@@ -247,7 +249,6 @@ namespace bigInteger
 
          }
      }
- }
 public static BigInt subtract(BigInt x, BigInt y) {
       LinkedListNode<int> num1 = x.arr.Last;
       LinkedListNode<int> num2 = y.arr.Last;
