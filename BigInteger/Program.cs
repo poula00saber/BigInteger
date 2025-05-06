@@ -40,7 +40,7 @@ namespace bigInteger
 
             // ========== MULTIPLICATION TEST CASES ==========
             Console.WriteLine("\n=== MULTIPLICATION TESTS ===");
-            TestMultiplication("0", "12345", "0");
+            TestMultiplication("10", "100", "1000");
             TestMultiplication("1234", "5678", "7006652");  // Your original test case
             TestMultiplication("123", "456", "56088");
             TestMultiplication("999", "999", "998001");
