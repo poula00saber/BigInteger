@@ -10,13 +10,13 @@ namespace bigInteger
             // Performance testing setup
             Stopwatch stopwatch = new Stopwatch();
             Console.WriteLine("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
-            Console.WriteLine(BigInt.divide(new BigInt("2"), new BigInt("22")).Remainder);
-            Console.WriteLine(BigInt.divide(new BigInt("22"), new BigInt("2")).Remainder);
+            Console.WriteLine(BigInt.divide(new BigInt("2"), new BigInt("22")).remain);
+            Console.WriteLine(BigInt.divide(new BigInt("22"), new BigInt("2")).remain);
 
             //  Console.WriteLine(BigInt.decrypt(new BigInt("746"), new BigInt("2563"), new BigInt("3713")));
             Console.WriteLine("==== Public Key Generation &&Key Generation  ===");
             Console.WriteLine("(N, e,d)");
-            Console.WriteLine(  BigInt.GeneratePublicKey());
+            Console.WriteLine(  BigInt.GeneratePublicKey(4));
 
             // ========== ADDITION TEST CASES ==========
             Console.WriteLine("=== ADDITION TESTS ===");
@@ -103,7 +103,7 @@ namespace bigInteger
 
         static void TestDivision(string num1, string num2, string expected)
         {
-            TestOperation(num1, num2, expected, (a, b) => BigInt.divide(a, b).Quotient, "÷");
+            TestOperation(num1, num2, expected, (a, b) => BigInt.divide(a, b).result, "÷");
         }
         // Add this function after TestDivision
         static void TestPower(string baseNum, string exponentNum, string expected)

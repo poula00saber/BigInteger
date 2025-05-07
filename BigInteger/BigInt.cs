@@ -60,7 +60,7 @@ namespace bigInteger
             }
             if (isEven(n))
             {
-                BigInt half = Power(x, divide(n, new BigInt("2")).Quotient);
+                BigInt half = Power(x, divide(n, new BigInt("2")).result);
                 RemoveFrontZeros(ref half);
 
                 return (Multiplication(half, half));
@@ -179,50 +179,51 @@ namespace bigInteger
             }
             return sum;
         }
- public static (BigInt result, BigInt remain) divide(BigInt num, BigInt divisor)
- {
-     if (divisor.ToString() == "0")
-     {
-         throw new ArithmeticException("Can't divide by zero");
-     }
-     if (compare(num, divisor) == 0)
-     {
-         return (new BigInt("1"), new BigInt("0"));
-     }
-     else if (compare(num, divisor) == -1)
-     {
-         return (new BigInt("0"), new BigInt(divisor.ToString()));
-     }
-     else
-     {
-         BigInt result = new BigInt();
-         BigInt remain = new BigInt("0");
-         LinkedListNode<int> currentDigit = num.arr.First;
-         while (currentDigit != null)
-         {
-             remain.arr.AddLast(currentDigit.Value);
-             if (compare(remain, divisor) == -1)
-             {
-                 result.arr.AddLast(0);
-                 currentDigit = currentDigit.Next;
-                 continue;
-             }
-             int divideCount = 0;
-             while (compare(remain, divisor) >= 0)
-             {
-                 remain = subtract(remain, divisor);
-                 divideCount++;
+        public static (BigInt result, BigInt remain) divide(BigInt num, BigInt divisor)
+        {
+            if (divisor.ToString() == "0")
+            {
+                throw new ArithmeticException("Can't divide by zero");
+            }
+            if (compare(num, divisor) == 0)
+            {
+                return (new BigInt("1"), new BigInt("0"));
+            }
+            else if (compare(num, divisor) == -1)
+            {
+                return (new BigInt("0"), new BigInt(divisor.ToString()));
+            }
+            else
+            {
+                BigInt result = new BigInt();
+                BigInt remain = new BigInt("0");
+                LinkedListNode<int> currentDigit = num.arr.First;
+                while (currentDigit != null)
+                {
+                    remain.arr.AddLast(currentDigit.Value);
+                    if (compare(remain, divisor) == -1)
+                    {
+                        result.arr.AddLast(0);
+                        currentDigit = currentDigit.Next;
+                        continue;
+                    }
+                    int divideCount = 0;
+                    while (compare(remain, divisor) >= 0)
+                    {
+                        remain = subtract(remain, divisor);
+                        divideCount++;
 
-             }
-             result.arr.AddLast(divideCount);
-             currentDigit = currentDigit.Next;
-         }
-         return (result, remain);
+                    }
+                    result.arr.AddLast(divideCount);
+                    currentDigit = currentDigit.Next;
+                }
+                return (result, remain);
 
-     }
+            }
+        }
  
 
-     static int compare(BigInt a, BigInt b)
+   public static int compare(BigInt a, BigInt b)
      {
          removeLeadingZeroes(a);
          removeLeadingZeroes(b);
@@ -247,7 +248,7 @@ namespace bigInteger
 
          }
      }
- }
+ 
 public static BigInt subtract(BigInt x, BigInt y) {
       LinkedListNode<int> num1 = x.arr.Last;
       LinkedListNode<int> num2 = y.arr.Last;
@@ -302,7 +303,7 @@ public static BigInt subtract(BigInt x, BigInt y) {
         
         public static void removeLeadingZeroes(BigInt num)
         {
-            while (num.arr.First.Value==0)
+            while (num.arr.First != null && num.arr.First.Value == 0 )
             {
                 num.arr.RemoveFirst();
             }
@@ -338,12 +339,12 @@ public static BigInt subtract(BigInt x, BigInt y) {
 
         public static BigInt encrypt(BigInt num, BigInt key, BigInt mod)
         {
-            return divide(Power(num, key), mod).Remainder;
+            return divide(Power(num, key), mod).remain;
         }
 
         public static BigInt decrypt(BigInt fnum, BigInt key, BigInt mod)
         {
-            return divide(Power(fnum, key), mod).Remainder;
+            return divide(Power(fnum, key), mod).remain;
         }
 
         public static bool operator <=(BigInt left, BigInt right)
@@ -389,10 +390,10 @@ public static BigInt subtract(BigInt x, BigInt y) {
             BigInt phi;
             for (BigInt i = new BigInt("2"); Multiplication(i, i) <= n; i = sum(i, new BigInt("1")))
             {
-                if (divide(n, i).Remainder.ToString() == "0") // Changed Equals(0) to ToString() == "0"
+                if (divide(n, i).remain.ToString() == "0") // Changed Equals(0) to ToString() == "0"
                 {
                     q = i;
-                    p = divide(n, i).Quotient;
+                    p = divide(n, i).result;
                     phi = Multiplication(subtract(q, new BigInt("1")), subtract(p, new BigInt("1")));
                     RemoveFrontZeros(ref phi);
                     return phi;
@@ -409,10 +410,10 @@ public static BigInt subtract(BigInt x, BigInt y) {
             }
             else
             {
-                var (gcd, x1, y1) = ExtendedEuclidean(divide(b, a).Remainder, a);
+                var (gcd, x1, y1) = ExtendedEuclidean(divide(b, a).remain, a);
                 var division = divide(b, a);
                 BigInt x = y1;
-                BigInt y = subtract(x1, Multiplication(division.Quotient, y1));
+                BigInt y = subtract(x1, Multiplication(division.result, y1));
                 return (gcd, x, y);
             }
         }
@@ -427,7 +428,7 @@ public static BigInt subtract(BigInt x, BigInt y) {
             else
             {
                 // Ensure the result is positive
-                BigInt result = divide(x, m).Remainder;
+                BigInt result = divide(x, m).remain;
                 if (compare(result, new BigInt("0")) < 0) // Changed result < new BigInt("0") to compare(result, new BigInt("0")) < 0
                 {
                     result = sum(result, m);
@@ -444,7 +445,7 @@ public static BigInt subtract(BigInt x, BigInt y) {
 
         private static Random rand = new Random();
 
-        public static (BigInt n, BigInt e, BigInt d) GeneratePublicKey(int digitSize )
+        public static (BigInt n, BigInt e) GeneratePublicKey(int digitSize )
         {
             BigInt p = generateprime(digitSize);
             BigInt q = generateprime(digitSize);
@@ -456,9 +457,9 @@ public static BigInt subtract(BigInt x, BigInt y) {
             BigInt n = Multiplication(p, q);
             BigInt phi = Multiplication(subtract(p, new BigInt("1")), subtract(q, new BigInt("1")));
             BigInt e = SelectPublicExponent(phi);
-            BigInt d = ModInverse(e, phi);
+           // BigInt d = ModInverse(e, phi);
             
-            return (n, e, d);
+            return (n, e);
         }
 
         private static BigInt generateprime(int digits)
@@ -535,7 +536,7 @@ public static BigInt subtract(BigInt x, BigInt y) {
             
             for (BigInt i = new BigInt("3"); Multiplication(i, i) <= number; i = sum(i, new BigInt("2")))
             {
-                if (BigInt.Equals( divide(number, i).Remainder,new BigInt( "0"))) 
+                if (BigInt.Equals( divide(number, i).remain,new BigInt( "0"))) 
                     return false;
             }
 
@@ -547,7 +548,7 @@ public static BigInt subtract(BigInt x, BigInt y) {
             while (b.ToString() != "0")
             {
                 BigInt temp = b;
-                b = BigInt.divide(a, b).Remainder;
+                b = BigInt.divide(a, b).remain ;
                 a = temp;
             }
             return a;
@@ -579,7 +580,8 @@ public static BigInt subtract(BigInt x, BigInt y) {
                 e = BigInt.sum(e, new BigInt("2"));
             }
 
-            throw new Exception("Failed to find a suitable public exponent.");
+            return e;
+            //throw new Exception("Failed to find a suitable public exponent.");
         }
     }
 }
