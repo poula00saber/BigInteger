@@ -30,7 +30,7 @@ namespace bigInteger
             return (this.arr.Last != null && this.arr.Last.Value % 2 == 0);
         }
 
-        public static void RemoveFrontZeros(ref BigInt n)
+        public static void RemoveFrontZeros( BigInt n)
         {
             LinkedListNode<int> p = n.arr.First;
             while (n.arr.Count > 1 && n.arr.First.Value == 0)
@@ -49,14 +49,14 @@ namespace bigInteger
             if (n.isEven())
             {
                 BigInt half = Power(x, divide(n, new BigInt("2")).Quotient);
-                RemoveFrontZeros(ref half);
+                RemoveFrontZeros( half);
 
                 return (Multiplication(half, half));
             }
             else
             {
                 BigInt result = Multiplication(x, Power(x, subtract(n, new BigInt("1"))));
-                RemoveFrontZeros(ref result);
+                RemoveFrontZeros( result);
 
                 return result;
             }
@@ -80,16 +80,16 @@ namespace bigInteger
             int n = Math.Max(f.arr.Count, s.arr.Count);
 
             if (f.arr.Count < s.arr.Count)
-                AddZerosFirst(ref f, s.arr.Count - f.arr.Count);
+                AddZerosFirst(f, s.arr.Count - f.arr.Count);
             else if (s.arr.Count < f.arr.Count)
-                AddZerosFirst(ref s, f.arr.Count - s.arr.Count);
+                AddZerosFirst(s, f.arr.Count - s.arr.Count);
 
             BigInt a = new BigInt();
             BigInt b = new BigInt();
-            SplitBigInt(f, ref a, ref b);
+            SplitBigInt(f,  a, b);
             BigInt c = new BigInt();
             BigInt d = new BigInt();
-            SplitBigInt(s, ref c, ref d);
+            SplitBigInt(s,c,d);
 
             BigInt ac = Multiplication(a, c);
             BigInt bd = Multiplication(b, d);
@@ -98,26 +98,26 @@ namespace bigInteger
             BigInt a_plus_b_Mult_c_plus_d = Multiplication(a_plus_b, c_plus_d);
             BigInt ad_Plus_bc = subtract(subtract(a_plus_b_Mult_c_plus_d, ac), bd);
 
-            BigInt result1 = AddZerosLast(ref ac, (n / 2) * 2);
-            BigInt result2 = AddZerosLast(ref ad_Plus_bc, n / 2);
+            BigInt result1 = AddZerosLast( ac, (n / 2) * 2);
+            BigInt result2 = AddZerosLast(ad_Plus_bc, n / 2);
 
 
             BigInt finalResult = sum(result1, result2);
             finalResult = sum(finalResult, bd);
-            RemoveFrontZeros(ref finalResult);
+            RemoveFrontZeros(finalResult);
             return finalResult;
 
         }
 
 
-        static void AddZerosFirst(ref BigInt n, int count)
+        static void AddZerosFirst( BigInt n, int count)
         {
             for (int i = 0; i < count; i++)
             {
                 n.arr.AddFirst(0);
             }
         }
-        static BigInt AddZerosLast(ref BigInt n, int count)
+        static BigInt AddZerosLast(BigInt n, int count)
         {
             for (int i = 0; i < count; i++)
             {
@@ -125,7 +125,7 @@ namespace bigInteger
             }
             return n;
         }
-        static void SplitBigInt(BigInt n, ref BigInt a, ref BigInt b)
+        static void SplitBigInt(BigInt n,  BigInt a, BigInt b)
         {
             int mid = n.arr.Count - n.arr.Count / 2;
             LinkedListNode<int> p = n.arr.First;
