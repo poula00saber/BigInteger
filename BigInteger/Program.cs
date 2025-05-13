@@ -12,7 +12,7 @@ namespace bigInteger
             Console.WriteLine("Before run: " + before);
 
             BigInt Prime = new BigInt();
-            Prime = BigInt.generateprime(1000);
+            Prime = BigInt.generateprime();
 
             Console.WriteLine(Prime.ToString());
 
@@ -20,7 +20,6 @@ namespace bigInteger
             Console.WriteLine("After run: " + after);
 
             Console.WriteLine("Difference in ticks: " + (after - before));
-
 
         }
     }
