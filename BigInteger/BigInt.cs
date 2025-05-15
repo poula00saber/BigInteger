@@ -1,39 +1,66 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Text;
 namespace bigInteger
 {
+    public class Digits
+    {
+        public int x;
+        public int repetitions;
+
+        public Digits(int x, int repetitions)
+        {
+            this.x = x;
+            this.repetitions = repetitions;
+        }
+    }
+
     public class BigInt
     {
-        public LinkedList<int> arr;
+        public LinkedList<Digits> arr;
         private static Random rand = new Random();
 
         public BigInt(string val)
         {
-            arr = new LinkedList<int>();
+            arr = new LinkedList<Digits>();
 
             foreach (char c in val)
             {
-                arr.AddLast(Int32.Parse(c.ToString()));
+                int num;
+                if (int.TryParse(c.ToString(), out num))
+                {
+                    arr.AddLast(new Digits(num, 1));
+                    continue;
+                }
+                num = c;
+                int counter = 0;
+                while (num > 0)
+                {
+                    arr.AddFirst(new Digits(num%10, 0));
+                    num /= 10;
+                    counter++;
+                }
+                arr.First.Value.repetitions = counter;
             }
         }
 
 
         public BigInt()
         {
-            arr = new LinkedList<int>();
+            arr = new LinkedList<Digits>();
         }
 
         public bool isEven()
         {
 
-            return (this.arr.Last != null && this.arr.Last.Value % 2 == 0);
+            return (this.arr.Last != null && this.arr.Last.Value.x % 2 == 0);
         }
 
         public static void RemoveFrontZeros(ref BigInt n)
         {
-            LinkedListNode<int> p = n.arr.First;
-            while (n.arr.Count > 1 && n.arr.First.Value == 0)
+            LinkedListNode<Digits> p = n.arr.First;
+            while (n.arr.Count > 1 && n.arr.First.Value.x == 0)
             {
                 n.arr.RemoveFirst();
             }
@@ -42,7 +69,7 @@ namespace bigInteger
 
         public static BigInt Power(BigInt x, BigInt n)
         {
-            if (n.arr.Count == 0 || n.ToString() == "0") // we need to make sure of this condition
+            if (n.arr.Count == 0 || n.arr.Last.Value.x == 0) ; 
             {
                 return new BigInt("1");
             }
@@ -64,15 +91,15 @@ namespace bigInteger
         }
         public static BigInt Multiplication(BigInt f, BigInt s)
         {
-            if (f.arr.Count == 1 && f.arr.First.Value == 0 ||
-           s.arr.Count == 1 && s.arr.First.Value == 0)
+            if (f.arr.Count == 1 && f.arr.First.Value.x == 0 ||
+           s.arr.Count == 1 && s.arr.First.Value.x == 0)
             {
                 return new BigInt("0");
             }
 
             if (f.arr.Count == 1 && s.arr.Count == 1)
             {
-                Int128 product = f.arr.First.Value * s.arr.First.Value;
+                Int128 product = f.arr.First.Value.x * s.arr.First.Value.x;
                 return new BigInt(product.ToString());
             }
 
@@ -114,21 +141,21 @@ namespace bigInteger
         {
             for (int i = 0; i < count; i++)
             {
-                n.arr.AddFirst(0);
+                n.arr.AddFirst(new Digits(0, 1));
             }
         }
         static BigInt AddZerosLast(ref BigInt n, int count)
         {
             for (int i = 0; i < count; i++)
             {
-                n.arr.AddLast(0);
+                n.arr.AddLast(new Digits(0, 1));
             }
             return n;
         }
         static void SplitBigInt(BigInt n, ref BigInt a, ref BigInt b)
         {
             int mid = n.arr.Count - n.arr.Count / 2;
-            LinkedListNode<int> p = n.arr.First;
+            LinkedListNode<Digits> p = n.arr.First;
             for (Int128 i = 0; i < mid; i++)
             {
                 a.arr.AddLast(p.Value);
@@ -143,8 +170,8 @@ namespace bigInteger
 
         public static BigInt sum(BigInt n, BigInt m)
         {
-            LinkedListNode<int> lastN = n.arr.Last;
-            LinkedListNode<int> lastM = m.arr.Last;
+            LinkedListNode<Digits> lastN = n.arr.Last;
+            LinkedListNode<Digits> lastM = m.arr.Last;
             int carry = 0;
             BigInt sum = new BigInt();
             while (lastN != null || lastM != null || carry > 0)
@@ -152,18 +179,18 @@ namespace bigInteger
                 int s = carry;
                 if (lastN != null)
                 {
-                    s += lastN.Value;
+                    s += lastN.Value.x;
                     lastN = lastN.Previous;
                 }
 
                 if (lastM != null)
                 {
-                    s += lastM.Value;
+                    s += lastM.Value.x;
                     lastM = lastM.Previous;
                 }
 
                 carry = s / 10;
-                sum.arr.AddFirst(s % 10);
+                sum.arr.AddFirst(new Digits(s % 10,1));
             }
             return sum;
         }
@@ -171,7 +198,6 @@ namespace bigInteger
         {
             if (compare(num, divisor) == -1)
                 return (new BigInt("0"), num);
-
             else
             {
                 BigInt quotient = new BigInt();
@@ -187,9 +213,6 @@ namespace bigInteger
                     return (sum(quotient, new BigInt("1")), subtract(remainder, divisor));
                 }
             }
-
-
-
         }
         public static int compare(BigInt a, BigInt b)
         {
@@ -201,12 +224,12 @@ namespace bigInteger
             else
             {
 
-                LinkedListNode<int> n1 = a.arr.First;
-                LinkedListNode<int> n2 = b.arr.First;
+                LinkedListNode<Digits> n1 = a.arr.First;
+                LinkedListNode<Digits> n2 = b.arr.First;
                 while (n1 != null || n2 != null)
                 {
-                    if (n1.Value > n2.Value) return 1;
-                    if (n1.Value < n2.Value) return -1;
+                    if (n1.Value.x > n2.Value.x) return 1;
+                    if (n1.Value.x < n2.Value.x) return -1;
                     n1 = n1.Next;
                     n2 = n2.Next;
                 }
@@ -220,8 +243,8 @@ namespace bigInteger
             if (compare(x, y) == 0) return new BigInt("0");
 
 
-            LinkedListNode<int> num1 = x.arr.Last;
-            LinkedListNode<int> num2 = y.arr.Last;
+            LinkedListNode<Digits> num1 = x.arr.Last;
+            LinkedListNode<Digits> num2 = y.arr.Last;
             BigInt result = new BigInt();
             int borrow = 0;
             while (num1 != null || num2 != null)
@@ -229,7 +252,7 @@ namespace bigInteger
                 int a, b;
                 if (num1 != null)
                 {
-                    a = num1.Value;
+                    a = num1.Value.x;
                 }
                 else
                 {
@@ -237,7 +260,7 @@ namespace bigInteger
                 }
                 if (num2 != null)
                 {
-                    b = num2.Value;
+                    b = num2.Value.x;
                 }
                 else
                 {
@@ -253,7 +276,7 @@ namespace bigInteger
                 {
                     borrow = 0;
                 }
-                result.arr.AddFirst(difference);
+                result.arr.AddFirst(new Digits(difference,1));
                 if (num1 != null)
                 {
                     num1 = num1.Previous;
@@ -268,10 +291,9 @@ namespace bigInteger
             return result.removeLeadingZeroes();
         }
 
-
         public BigInt removeLeadingZeroes()
         {
-            while (this.arr.First != null && this.arr.First.Value == 0)
+            while (this.arr.First != null && this.arr.First.Value.x == 0)
             {
                 this.arr.RemoveFirst();
             }
@@ -280,39 +302,58 @@ namespace bigInteger
 
         override public String ToString()
         {
-            return string.Join("", arr);
-        }
-        public override bool Equals(object obj)
-        {
-            if (obj is BigInt secondObj)
+            string ans = "";
+
+           foreach(Digits n in arr)
             {
-                LinkedListNode<int> p1 = this.arr.Last;
-                LinkedListNode<int> p2 = secondObj.arr.Last;
-                while (p1 != null && p2 != null)
-                {
-                    if (p1.Value != p2.Value)
-                    {
-                        return false;
-                    }
-                    else
-                    {
-                        p1 = p1.Previous;
-                        p2 = p2.Previous;
-                    }
-                }
-                return p1 == null && p2 == null; // Both lists fully traversed
+                ans += n.x;
             }
-            return false;
+
+            return ans;
+
+            
         }
+
+        public String ToLetters()
+        {
+            string ans = "";
+
+
+            LinkedList<Digits>.Enumerator it = arr.GetEnumerator();
+            while (it.MoveNext())
+            {
+                
+                string asciiCode = "";
+                int repetitions = it.Current.repetitions;
+
+                if(repetitions == 1)
+                {
+                    ans += it.Current.x.ToString();
+                    continue;
+                }
+
+                for (int j = 0; j < repetitions; j++)
+                {
+                    asciiCode += (it.Current.x);
+                    if(j != repetitions-1)
+                        it.MoveNext();
+                }
+                int code; 
+                int.TryParse(asciiCode, out code);
+                ans += (char)code;
+            }
+            return ans;
+        }
+
 
         public static BigInt encrypt(BigInt num, BigInt key, BigInt mod)
         {
-            if (num.arr.Last.Value == 0) 
+            if (num.arr.Count == 1 && num.arr.Last.Value.x == 0)
             {
                 return new BigInt("0");
             }
 
-            if(key.arr.Last.Value == 0 )
+            if (key.arr.Count == 1 && key.arr.Last.Value.x == 0)
             {
                 return new BigInt("1");
             }
@@ -333,7 +374,7 @@ namespace bigInteger
             return (divide(sum(result, mod), mod).Remainder);
         }
 
-     
+
         public static bool operator <=(BigInt left, BigInt right)
         {
             if (compare(left, right) <= 0)
@@ -370,61 +411,38 @@ namespace bigInteger
             return false;
         }
 
-        //public static BigInt ModulusFactor(BigInt n)
-        //{
-        //    BigInt p;
-        //    BigInt q;
-        //    BigInt phi;
-        //    for (BigInt i = new BigInt("2"); Multiplication(i, i) <= n; i = sum(i, new BigInt("1")))
-        //    {
-        //        if (divide(n, i).Remainder.arr.Last.Value == 0)
-        //        {
-        //            q = i;
-        //            p = divide(n, i).Quotient;
-        //            phi = Multiplication(subtract(q, new BigInt("1")), subtract(p, new BigInt("1")));
-        //            RemoveFrontZeros(ref phi);
-        //            return phi;
-        //        }
-        //    }
-        //    return new BigInt("1");
-        //}
-
         public static BigInt generateprime(int digits)
         {
-            // Define the range for the prime number
+
             BigInt lowerBound = lowerbound(digits);
             BigInt upperBound = upperbound(digits);
 
             while (true)
             {
-                // Generate a random odd number
-                BigInt candidate = GenerateRandomBigInt(lowerBound, upperBound);
+                BigInt num = GenerateRandomBigInt(lowerBound, upperBound);
+                if (num.isEven())
+                    num = BigInt.sum(num, new BigInt("1"));
 
-                // Make sure it's odd
-                if (candidate.isEven())
-                    candidate = BigInt.sum(candidate, new BigInt("1"));
-
-                // Perform primality test
-                if (IsPrime(candidate))
-                    return candidate;
+                if (IsPrime(num))
+                    return num;
             }
         }
 
         private static BigInt GenerateRandomBigInt(BigInt min, BigInt max)
         {
-        
+
             string maxStr = max.ToString();
             int maxDigits = maxStr.Length;
-         
+
             while (true)
             {
                 string randomValue = "";
 
-                randomValue += (char)('0' + rand.Next(1,10));
+                randomValue += (char)('0' + rand.Next(1, 9));
 
                 for (int i = 1; i < maxDigits; i++)
                 {
-                    randomValue += (char)('0' + rand.Next(10));
+                    randomValue += (char)('0' + rand.Next(9));
                 }
 
                 BigInt result = new BigInt(randomValue);
@@ -442,12 +460,9 @@ namespace bigInteger
             {
                 q = generateprime(digitSize);
             }
-
             BigInt n = Multiplication(p, q);
             BigInt phi = Multiplication(subtract(p, new BigInt("1")), subtract(q, new BigInt("1")));
             BigInt e = SelectPublicExponent(phi);
-    //        BigInt d = ModInverse(e, phi);
-
             return (n, e);
         }
 
@@ -470,20 +485,22 @@ namespace bigInteger
 
         static bool IsPrime(BigInt number)
         {
-            if (compare(number, new BigInt("2")) < 0) return false;
-            if (BigInt.Equals(number, new BigInt("2")) || BigInt.Equals(number, new BigInt("3"))) return true;
-            if (number.isEven()) return false;
+            if (compare(number, new BigInt("2")) < 0)
+                return false;
+            if (BigInt.Equals(number, new BigInt("2")) || BigInt.Equals(number, new BigInt("3")))
+                return true;
+            if (number.isEven())
+                return false;
 
-
-            for (BigInt i = new BigInt("3"); Multiplication(i, i) <= number; i = sum(i, new BigInt("2")))
+            for (BigInt i = new BigInt("3"); Multiplication(i, i) <= number; i = sum(i, new BigInt("1")))
             {
-                if (divide(number, i).Remainder.arr.Last.Value == 0)
+                if (divide(number, i).Remainder.arr.Last.Value.x == 0)
                     return false;
             }
 
             return true;
         }
-        //phi&&e
+        //for phi and e
         private static BigInt GCD(BigInt a, BigInt b)
         {
             while (b.ToString() != "0")
@@ -497,28 +514,15 @@ namespace bigInteger
 
         private static BigInt SelectPublicExponent(BigInt phi)
         {
-            // Common choices for e include 3, 17, and 65537
-            BigInt[] commonValues = {
-                new BigInt("3"),
-                new BigInt("17"),
-                new BigInt("65537")
-            };
 
-            // Try common values first
-            foreach (BigInt candidate in commonValues)
-            {
-                if (BigInt.compare(candidate, phi) < 0 && GCD(candidate, phi).ToString() == "1")
-                    return candidate;
-            }
+            BigInt e = new BigInt("3");
 
-            // If none work, find another suitable value
-            BigInt e = new BigInt("65537");
             while (BigInt.compare(e, phi) < 0)
             {
                 if (GCD(e, phi).ToString() == "1")
                     return e;
 
-                e = BigInt.sum(e, new BigInt("2"));
+                e = BigInt.sum(e, new BigInt("1"));
             }
 
             throw new Exception("Failed to find a suitable public exponent.");
