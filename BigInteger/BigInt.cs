@@ -217,97 +217,99 @@ namespace bigInteger
                     result.arr.AddLast(divideCount);
                     currentDigit = currentDigit.Next;
                 }
+                RemoveFrontZeros(ref result);
                 return (result, remain);
 
             }
         }
- 
-
-   public static int compare(BigInt a, BigInt b)
-     {
-         removeLeadingZeroes(a);
-         removeLeadingZeroes(b);
-
-         if (a.arr.Count > b.arr.Count)
-          return 1;
-
-         else if (a.arr.Count < b.arr.Count) return -1;
-         else
-         {
-
-             LinkedListNode<int> n1= a.arr.First;
-             LinkedListNode<int> n2 = b.arr.First;
-             while (n1 != null || n2!=null)
-             {
-                 if (n1.Value > n2.Value) return 1;
-                 if (n1.Value < n2.Value) return -1;
-                 n1 = n1.Next;
-                 n2 = n2.Next;
-             }
-             return 0;
-
-         }
-     }
- 
-public static BigInt subtract(BigInt x, BigInt y) {
-      LinkedListNode<int> num1 = x.arr.Last;
-      LinkedListNode<int> num2 = y.arr.Last;
-      BigInt result= new BigInt();
-      int borrow = 0;
-      while(num1 != null || num2!=null) 
-      {
-          int a, b;
-          if (num1!=null)
-          {
-              a=num1.Value;
-          }
-          else
-          {
-              a = 0;
-          }
-          if (num2 != null)
-          {
-              b = num2.Value;
-          }
-          else
-          {
-              b = 0;
-          }
-          int difference = a - b - borrow;
-          if (difference < 0)
-          {
-              difference = difference + 10;
-              borrow = 1;
-          }
-          else
-          {
-              borrow= 0;
-          }
-           result.arr.AddFirst(difference);
-          if (num1!=null)
-          {
-              num1 = num1.Previous;
-          }
-          if (num2 != null)
-          {
-              num2 = num2.Previous;
-          }
 
 
-      }
+        public static int compare(BigInt a, BigInt b)
+        {
+            removeLeadingZeroes(a);
+            removeLeadingZeroes(b);
 
-      return result;
-  
- }
-        
-        
+            if (a.arr.Count > b.arr.Count)
+                return 1;
+
+            else if (a.arr.Count < b.arr.Count) return -1;
+            else
+            {
+
+                LinkedListNode<int> n1 = a.arr.First;
+                LinkedListNode<int> n2 = b.arr.First;
+                while (n1 != null || n2 != null)
+                {
+                    if (n1.Value > n2.Value) return 1;
+                    if (n1.Value < n2.Value) return -1;
+                    n1 = n1.Next;
+                    n2 = n2.Next;
+                }
+                return 0;
+
+            }
+        }
+
+        public static BigInt subtract(BigInt x, BigInt y) {
+            LinkedListNode<int> num1 = x.arr.Last;
+            LinkedListNode<int> num2 = y.arr.Last;
+            BigInt result = new BigInt();
+            int borrow = 0;
+            while (num1 != null || num2 != null)
+            {
+                int a, b;
+                if (num1 != null)
+                {
+                    a = num1.Value;
+                }
+                else
+                {
+                    a = 0;
+                }
+                if (num2 != null)
+                {
+                    b = num2.Value;
+                }
+                else
+                {
+                    b = 0;
+                }
+                int difference = a - b - borrow;
+                if (difference < 0)
+                {
+                    difference = difference + 10;
+                    borrow = 1;
+                }
+                else
+                {
+                    borrow = 0;
+                }
+                result.arr.AddFirst(difference);
+                if (num1 != null)
+                {
+                    num1 = num1.Previous;
+                }
+                if (num2 != null)
+                {
+                    num2 = num2.Previous;
+                }
+
+
+            }
+            RemoveFrontZeros(ref result);
+
+            return result;
+
+        }
+
+
         public static void removeLeadingZeroes(BigInt num)
         {
-            while (num.arr.First != null && num.arr.First.Value == 0 )
+            while (num.arr.First != null && num.arr.First.Value == 0)
             {
                 num.arr.RemoveFirst();
             }
-          
+
         }
 
         override public String ToString()
@@ -339,8 +341,25 @@ public static BigInt subtract(BigInt x, BigInt y) {
 
         public static BigInt encrypt(BigInt num, BigInt key, BigInt mod)
         {
-            return divide(Power(num, key), mod).remain;
+
+            if (key == new BigInt(" 0"))
+            {
+                return new BigInt(" 1");
+            }
+            if (isEven(key))
+            {
+                BigInt half = encrypt(num, divide(key, new BigInt(" 2")).result, mod);
+                return divide((Multiplication(half, half)), mod).remain;
+            }
+            else
+            {
+                return (Multiplication( num,  encrypt(num, divide(key, new BigInt(" 2")).result, mod)));
+            }
         }
+        
+
+    
+
 
         public static BigInt decrypt(BigInt fnum, BigInt key, BigInt mod)
         {
@@ -495,12 +514,12 @@ public static BigInt subtract(BigInt x, BigInt y) {
                 string randomValue = "";
 
                 // First digit shouldn't be 0
-                randomValue += (char)('1' + rand.Next(9));
+                randomValue += (char)('1' + rand.Next(8));
 
                 // Generate remaining digits
                 for (int i = 1; i < maxDigits; i++)
                 {
-                    randomValue += (char)('0' + rand.Next(10));
+                    randomValue += (char)('0' + rand.Next(8));
                 }
 
                 BigInt result = new BigInt(randomValue);

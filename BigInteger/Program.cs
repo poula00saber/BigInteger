@@ -16,7 +16,7 @@ namespace bigInteger
             //  Console.WriteLine(BigInt.decrypt(new BigInt("746"), new BigInt("2563"), new BigInt("3713")));
             Console.WriteLine("==== Public Key Generation &&Key Generation  ===");
             Console.WriteLine("(N, e,d)");
-            Console.WriteLine(  BigInt.GeneratePublicKey(4));
+            Console.WriteLine(  BigInt.GeneratePublicKey(2));
 
             // ========== ADDITION TEST CASES ==========
             Console.WriteLine("=== ADDITION TESTS ===");
@@ -47,7 +47,7 @@ namespace bigInteger
             TestMultiplication("123456789", "987654321", "121932631112635269");
             TestMultiplication("57329817389217483219843341245621641542354235423543254325",
                              "55435432543729845789275437297438547543254325432543254344",
-                             "3178767850521823213438162548979797456012759470499004341405669092380931914349760613990090250240481300");
+                             "3178103224624316092411310106746900438764388604239114998124983611385589016164466733032870012982530046183953037800");
 
             // ========== DIVISION TEST CASES ==========
             Console.WriteLine("\n=== DIVISION TESTS ===");
