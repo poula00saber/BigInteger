@@ -11,10 +11,11 @@ namespace bigInteger
             int before = System.Environment.TickCount;
             Console.WriteLine("Before run: " + before);
 
-            BigInt Prime = new BigInt();
-            Prime = BigInt.generateprime(1000);
+            BigInt x = new BigInt("123");
+            BigInt y = new BigInt("456");
+            BigInt z = BigInt.subtract(y, x);
 
-            Console.WriteLine(Prime.ToString());
+            Console.WriteLine(z.ToString());
 
             int after = System.Environment.TickCount;
             Console.WriteLine("After run: " + after);
