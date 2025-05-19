@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 namespace bigInteger
 {
-    
+
     public class BigInt
     {
         public LinkedList<int> arr;
@@ -21,7 +21,7 @@ namespace bigInteger
                 num = c - '0'; //O(1)
                 arr.AddLast(num); //O(1)
             }
-            
+
         }
 
 
@@ -29,13 +29,13 @@ namespace bigInteger
         {
             arr = new LinkedList<int>(); //O(1)
 
-            foreach(char c in val) //O(N)
+            foreach (char c in val) //O(N)
             {
                 string str = (c - '0').ToString(); //O(N)
                 arr.AddLast(str.Length);
                 foreach (char n in str) //O(1), The length of the string is very small at most 3 digits so it's 
                 {
-                    int num = n - '0';        
+                    int num = n - '0';
                     arr.AddLast(num);
                 }
             }
@@ -59,14 +59,14 @@ namespace bigInteger
         //    while (n.arr.Count > 1 && n.arr.First.Value == 0) ////O(n)
         //    {
         //        n.arr.RemoveFirst(); //O(1)
-                
+
         //    }
 
         //}
 
         public static BigInt Power(BigInt x, BigInt n) // O(n^1.58)
         {
-            if (n.arr.Count == 0 || n.arr.Last.Value == 0)  
+            if (n.arr.Count == 0 || n.arr.Last.Value == 0)
             {
                 return new BigInt("1");//O(1)
             }
@@ -90,7 +90,7 @@ namespace bigInteger
             }
 
         }
-      
+
         public static BigInt Multiplication(BigInt f, BigInt s)  // O(n^1.58)
         {
             //O(1)
@@ -116,10 +116,10 @@ namespace bigInteger
 
             BigInt a = new BigInt();//O(1)
             BigInt b = new BigInt();//O(1)
-            SplitBigInt(f,  a, b);//O(n)
+            SplitBigInt(f, a, b);//O(n)
             BigInt c = new BigInt();//O(1)
             BigInt d = new BigInt();//O(1)
-            SplitBigInt(s,c,d);//O(n)
+            SplitBigInt(s, c, d);//O(n)
 
             BigInt ac = Multiplication(a, c);// T(N)= 3T(N/2)+O(n)  a =3 b =2  0.58>E>0   case 1 
             BigInt bd = Multiplication(b, d);
@@ -132,7 +132,7 @@ namespace bigInteger
 
 
 
-            BigInt result1 = AddZerosLast( ac, (n / 2) * 2);//O(n)
+            BigInt result1 = AddZerosLast(ac, (n / 2) * 2);//O(n)
             BigInt result2 = AddZerosLast(ad_Plus_bc, n / 2);//O(n)
             // ac* 10 ^ n + bd * 10 ^ n/2  +ad_Plus_bc
 
@@ -142,7 +142,7 @@ namespace bigInteger
             return finalResult;//O(1)
 
         }
-        static void AddZerosFirst( BigInt n, int count)  // O(n)
+        static void AddZerosFirst(BigInt n, int count)  // O(n)
         {
             for (int i = 0; i < count; i++)  // O(n)
             {
@@ -157,7 +157,7 @@ namespace bigInteger
             }
             return n;//O(1)
         }
-        static void SplitBigInt(BigInt n,  BigInt a, BigInt b)//O(n)
+        static void SplitBigInt(BigInt n, BigInt a, BigInt b)//O(n)
         {
             int mid = n.arr.Count - n.arr.Count / 2;//O(1)
             LinkedListNode<int> p = n.arr.First;//O(1)
@@ -200,7 +200,7 @@ namespace bigInteger
             return sum;//O(1)
         }
 
-        
+
         public static (BigInt Quotient, BigInt Remainder) divide(BigInt num, BigInt divisor)//O(n)
         {
 
@@ -212,7 +212,7 @@ namespace bigInteger
                 BigInt remainder = new BigInt();//O(1)
                 BigInt s = sum(divisor, divisor);//O(n)
 
-                (quotient, remainder) = divide(num,s); //T(N) = (N/2) + //O(n)  n/2< cn case 3  // 2* divisor = n/2
+                (quotient, remainder) = divide(num, s); //T(N) = (N/2) + //O(n)  n/2< cn case 3  // 2* divisor = n/2
                 quotient = sum(quotient, quotient);//O(n)
                 if (compare(remainder, divisor) == -1)//O(n)
                 {
@@ -316,7 +316,7 @@ namespace bigInteger
         override public String ToString()//O(n)
         {
             string ans = "";
-           foreach(int n in arr)
+            foreach (int n in arr)
             {
                 ans += n;
             }
@@ -332,20 +332,20 @@ namespace bigInteger
                 int size = it.Current;
                 it.MoveNext();
                 string letter = "";
-                
-                for(int i = 0; i < size; i++)
+
+                for (int i = 0; i < size; i++)
                 {
                     letter += it.Current;
-                    if( i != size - 1)
+                    if (i != size - 1)
                     {
                         it.MoveNext();
                     }
                 }
-                int letterASCII = 0; 
-                
+                int letterASCII = 0;
+
                 for (int i = 0; i < letter.Length; i++)
                 {
-                    letterASCII += (int)((letter[i]-'0') * (Math.Pow(10, letter.Length-i-1))); //Ascii code of the letter, Multiplied by its unit (i.e Hundred and things like that guys smh)
+                    letterASCII += (int)((letter[i] - '0') * (Math.Pow(10, letter.Length - i - 1))); //Ascii code of the letter, Multiplied by its unit (i.e Hundred and things like that guys smh)
                 }
 
                 letterASCII += '0';
@@ -353,7 +353,7 @@ namespace bigInteger
             }
             return ans;
         }
-      
+
         public override bool Equals(object obj)//O(Max(n1,n2))
         {
             if (obj is BigInt secondObj)//O(Max(n1,n2))
@@ -380,7 +380,7 @@ namespace bigInteger
 
         public static BigInt encrypt(BigInt num, BigInt key, BigInt mod)//O(n ^ 1.58)
         {
-          if (num.arr.Count == 1 && num.arr.Last.Value == 0)
+            if (num.arr.Count == 1 && num.arr.Last.Value == 0)
             {
                 return new BigInt("0");
             }
@@ -502,13 +502,13 @@ namespace bigInteger
         private static BigInt GenerateRandomBigInt(BigInt min, BigInt max)//O(n)
         {
 
-        
+
             string maxStr = max.ToString();//O(1)
             int maxDigits = maxStr.Length;//O(1)
             while (true)
             {
                 string randomValue = "";//O(1)
-                randomValue += (char)('0' + rand.Next(1,10));//O(1)
+                randomValue += (char)('0' + rand.Next(1, 10));//O(1)
 
 
                 for (int i = 1; i < maxDigits; i++)//O(1) max digit is constant max= 999
@@ -560,37 +560,46 @@ namespace bigInteger
             if (compare(number, new BigInt("2")) < 0) return false;//O(n)
             if (BigInt.Equals(number, new BigInt("2")) || BigInt.Equals(number, new BigInt("3"))) return true; //O(n)
             if (number.isEven()) return false;//O(1)
+
+            //O(n^(1.58 + 0.5 )) = //O(n^2.08) 
+            // root n (num of iterations) * O(n^1.58) (body)
             for (BigInt i = new BigInt("3"); Multiplication(i, i) <= number; i = sum(i, new BigInt("1")))
             {
-                if (divide(number, i).Remainder.arr.Last.Value == 0)//O(n)
+
+                // multiplication >  divide -> O(n^1.58) 
+                if (divide(number, i).Remainder.arr.Last.Value == 0)//O(nlog(n))
                     return false;//O(1)
             }
 
             return true;
         }
         //for phi and e
+        //O(n (log(n))^2)
+
         private static BigInt GCD(BigInt a, BigInt b)
         {
-            while (b.ToString() != "0")
+            while (b.ToString() != "0")//O(n)
             {
                 BigInt temp = b;
-                b = BigInt.divide(a, b).Remainder;
-                a = temp;
+                b = BigInt.divide(a, b).Remainder;//O(nlog(n))
+                a = temp;//O(1)
             }
-            return a;
+            return a;//O(1)
         }
 
+
+        //O(N^2 (Log N)^2)
         private static BigInt SelectPublicExponent(BigInt phi)
         {
 
             BigInt e = new BigInt("3");
 
-            while (BigInt.compare(e, phi) < 0)
+            while (BigInt.compare(e, phi) < 0)//O(n)
             {
-                if (GCD(e, phi).ToString() == "1")
+                if (GCD(e, phi).ToString() == "1") //O(n (log(n))^2)
                     return e;
 
-                e = BigInt.sum(e, new BigInt("1"));
+                e = BigInt.sum(e, new BigInt("1"));//O(n)
             }
 
             throw new Exception("Failed to find a suitable public exponent.");
