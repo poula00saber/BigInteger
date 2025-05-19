@@ -17,14 +17,27 @@ namespace bigInteger
             foreach (char c in val)
             {
                 int num;
-                if (int.TryParse(c.ToString(), out num))
+                num = c - '0';
+                arr.AddLast(num);
+            }
+            
+        }
+
+        public BigInt(string val, string mode)
+        {
+            arr = new LinkedList<int>();
+
+            foreach(char c in val)
+            {
+                string str = (c - '0').ToString();
+                arr.AddLast(str.Length);
+                foreach (char n in str)
                 {
+                    int num = n - '0';        
                     arr.AddLast(num);
-                    continue;
                 }
             }
         }
-
 
         public BigInt()
         {
@@ -49,10 +62,11 @@ namespace bigInteger
 
         public static BigInt Power(BigInt x, BigInt n)
         {
-            if (n.arr.Count == 0 || n.arr.Last.Value == 0) ; 
+            if (n.arr.Count == 0 || n.arr.Last.Value == 0)  
             {
                 return new BigInt("1");
             }
+
             if (n.isEven())
             {
                 BigInt half = Power(x, divide(n, new BigInt("2")).Quotient);
@@ -290,7 +304,36 @@ namespace bigInteger
             return ans;
         }
 
-      
+        public String ToLetters()
+        {
+            LinkedList<int>.Enumerator it = arr.GetEnumerator();
+            string ans = "";
+            while (it.MoveNext())
+            {
+                int size = it.Current;
+                it.MoveNext();
+                string letter = "";
+                
+                for(int i = 0; i < size; i++)
+                {
+                    letter += it.Current;
+                    if( i != size - 1)
+                    {
+                        it.MoveNext();
+                    }
+                }
+                int letterASCII = 0; 
+                
+                for (int i = 0; i < letter.Length; i++)
+                {
+                    letterASCII += (int)((letter[i]-'0') * (Math.Pow(10, letter.Length-i-1))); //Ascii code of the letter, Multiplied by its unit (i.e Hundred and things like that guys smh)
+                }
+
+                letterASCII += '0';
+                ans += (char)letterASCII;
+            }
+            return ans;
+        }
 
         public static BigInt encrypt(BigInt num, BigInt key, BigInt mod)
         {
@@ -298,7 +341,33 @@ namespace bigInteger
             {
                 return new BigInt("0");
             }
+            if (key.arr.Count == 1 && key.arr.Last.Value == 0)
+            {
+                return new BigInt("1");
+            }
+            BigInt result = new BigInt();
+            if (key.isEven())
+            {
+                result = encrypt(num, divide(key, new BigInt("2")).Quotient, mod);
+                result = divide(Multiplication(result,result), mod).Remainder;
+            }
+            else
+            {
+                result = divide(num, mod).Remainder;
+                BigInt middleValue = encrypt(num, subtract(key, new BigInt("1")), mod);
+                middleValue = Multiplication(result, middleValue);
+                middleValue = divide(middleValue, mod).Remainder;
+                result = divide(middleValue, mod).Remainder;
+            }
+            return (divide(sum(result, mod), mod).Remainder);
+        }
 
+        public static BigInt decrypt(BigInt num, BigInt key, BigInt mod)
+        {
+            if (num.arr.Count == 1 && num.arr.Last.Value == 0)
+            {
+                return new BigInt("0");
+            }
             if (key.arr.Count == 1 && key.arr.Last.Value == 0)
             {
                 return new BigInt("1");
