@@ -23,8 +23,6 @@ namespace bigInteger
             }
 
         }
-
-
         public BigInt(string val, string mode) //O(N^2)
         {
             arr = new LinkedList<int>(); //O(1)
@@ -323,35 +321,41 @@ namespace bigInteger
             return ans;
         }
 
+
+        //O(nlog(n))
         public String ToLetters()
         {
             LinkedList<int>.Enumerator it = arr.GetEnumerator();
-            string ans = "";
-            while (it.MoveNext())
-            {
-                int size = it.Current;
-                it.MoveNext();
-                string letter = "";
+            string ans = "";//O(1)
 
-                for (int i = 0; i < size; i++)
+
+            while (it.MoveNext())//O(n)
+            {
+                int size = it.Current;//O(1)
+                it.MoveNext();//O(1)
+                string letter = "";//O(1)
+
+                for (int i = 0; i < size; i++)//O(n)
                 {
-                    letter += it.Current;
-                    if (i != size - 1)
+                    letter += it.Current;//O(1)
+                    if (i != size - 1)//O(1)
                     {
-                        it.MoveNext();
+                        it.MoveNext();//O(1)
                     }
                 }
-                int letterASCII = 0;
+                int letterASCII = 0;//O(1)
 
-                for (int i = 0; i < letter.Length; i++)
+                //O(log n) 
+                for (int i = 0; i < letter.Length; i++)//O(1)
                 {
+                    //O(logn) built in function
                     letterASCII += (int)((letter[i] - '0') * (Math.Pow(10, letter.Length - i - 1))); //Ascii code of the letter, Multiplied by its unit (i.e Hundred and things like that guys smh)
                 }
 
-                letterASCII += '0';
-                ans += (char)letterASCII;
+                letterASCII += '0';//O(1)
+                ans += (char)letterASCII;//O(1)
             }
-            return ans;
+            return ans;//O(1)
         }
 
         public override bool Equals(object obj)//O(Max(n1,n2))
@@ -482,20 +486,33 @@ namespace bigInteger
         }
 
 
+
+        //?? O(infinity) and sigma(n^2.08)
         public static BigInt generateprime()
         {
-            int digits = 3;
+            Dictionary<BigInt, bool> isChecked= new Dictionary<BigInt, bool>();//O(1)
+            int digits = 3;//O(1)
             // Define the range for the prime number
             BigInt lowerBound = lowerbound(digits);//O(1)
             BigInt upperBound = upperbound(digits);//O(1)
             while (true)
             {
-                BigInt num = GenerateRandomBigInt(lowerBound, upperBound);
-                if (num.isEven())
-                    num = BigInt.sum(num, new BigInt("1"));
 
-                if (IsPrime(num))
-                    return num;
+                BigInt num = GenerateRandomBigInt(lowerBound, upperBound);//O(n) 
+
+                if (isChecked[num] == true) //O(1)
+                {
+                    continue;//O(1)
+                }
+                else
+                {
+                    isChecked[num]=true; //O(1)
+                    if (num.isEven()) //O(1)
+                        num = BigInt.sum(num, new BigInt("1"));//O(n)
+
+                    if (IsPrime(num))//O(n^2.08) 
+                        return num;//O(1)
+                }
             }
         }
 
@@ -523,17 +540,21 @@ namespace bigInteger
             }
         }
 
+
+        //sigma(n^2.08)
         public static (BigInt n, BigInt e) GeneratePublicKey(int digitSize)
         {
-            BigInt p = generateprime();
-            BigInt q = generateprime();
-            while (BigInt.Equals(p, q))
+            BigInt p = generateprime();//sigma(n^2.08)
+            BigInt q = generateprime();//sigma(n^2.08)
+            while (BigInt.Equals(p, q))//O(N)
             {
-                q = generateprime();
+                q = generateprime();//sigma(n^2.08)
             }
-            BigInt n = Multiplication(p, q);
-            BigInt phi = Multiplication(subtract(p, new BigInt("1")), subtract(q, new BigInt("1")));
-            BigInt e = SelectPublicExponent(phi);
+            BigInt n = Multiplication(p, q);//O(n^1.58)
+            BigInt x = Multiplication(p, q);//O(n^1.58)
+            BigInt y = subtract(p, new BigInt("1"));//O(n)
+            BigInt phi = Multiplication(x, y);//O(n^1.58)
+            BigInt e = SelectPublicExponent(phi);//O(n (log(n))^2)
             return (n, e);
         }
 
@@ -553,7 +574,7 @@ namespace bigInteger
                 value += "9";//O(1)
             return new BigInt(value);//O(1)
         }
-
+        //O(n^2.08) 
         static bool IsPrime(BigInt number)
         {
 
@@ -574,12 +595,14 @@ namespace bigInteger
             return true;
         }
         //for phi and e
-        //O(n (log(n))^2)
 
+        //O(n (log(n))^2)
         private static BigInt GCD(BigInt a, BigInt b)
         {
-            while (b.ToString() != "0")//O(n)
+            while (b.ToString() != "0")//O(log(n))
             {
+                // to string -> O(n)
+
                 BigInt temp = b;
                 b = BigInt.divide(a, b).Remainder;//O(nlog(n))
                 a = temp;//O(1)
