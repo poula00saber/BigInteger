@@ -1,8 +1,10 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Text;
 namespace bigInteger
 {
+    
     public class BigInt
     {
         public LinkedList<int> arr;
@@ -11,15 +13,35 @@ namespace bigInteger
         //O(n)
         public BigInt(string val)
         {
-            arr = new LinkedList<int>();
+            arr = new LinkedList<int>(); //O(1)
 
-            foreach (char c in val)
+            foreach (char c in val) //O(N)
             {
-                arr.AddLast(Int32.Parse(c.ToString()));
+                int num; //O(1)
+                num = c - '0'; //O(1)
+                arr.AddLast(num); //O(1)
+            }
+            
+        }
+
+
+        public BigInt(string val, string mode) //O(N^2)
+        {
+            arr = new LinkedList<int>(); //O(1)
+
+            foreach(char c in val) //O(N)
+            {
+                string str = (c - '0').ToString(); //O(N)
+                arr.AddLast(str.Length);
+                foreach (char n in str) //O(1), The length of the string is very small at most 3 digits so it's 
+                {
+                    int num = n - '0';        
+                    arr.AddLast(num);
+                }
             }
         }
 
-        //O(1)
+
         public BigInt()
         {
             arr = new LinkedList<int>();
@@ -44,10 +66,11 @@ namespace bigInteger
 
         public static BigInt Power(BigInt x, BigInt n) // O(n^1.58)
         {
-            if (n.arr.Count == 0 || n.ToString() == "0") // we need to make sure of this condition
+            if (n.arr.Count == 0 || n.arr.Last.Value == 0)  
             {
                 return new BigInt("1");//O(1)
             }
+
             if (n.isEven())//O(1)
             {
 
@@ -180,9 +203,9 @@ namespace bigInteger
         
         public static (BigInt Quotient, BigInt Remainder) divide(BigInt num, BigInt divisor)//O(n)
         {
+
             if (compare(num, divisor) == -1)//O(Max(n1,n2))
                 return (new BigInt("0"), num);//O(1)
-
             else
             {
                 BigInt quotient = new BigInt();//O(1)
@@ -202,9 +225,6 @@ namespace bigInteger
                     return (d, sub);//O(1)
                 }
             }
-
-
-
         }
         public static int compare(BigInt a, BigInt b)//O(Max(n1,n2))
         {
@@ -295,8 +315,45 @@ namespace bigInteger
 
         override public String ToString()//O(n)
         {
-            return string.Join("", arr);//O(1)
+            string ans = "";
+           foreach(int n in arr)
+            {
+                ans += n;
+            }
+            return ans;
         }
+
+        public String ToLetters()
+        {
+            LinkedList<int>.Enumerator it = arr.GetEnumerator();
+            string ans = "";
+            while (it.MoveNext())
+            {
+                int size = it.Current;
+                it.MoveNext();
+                string letter = "";
+                
+                for(int i = 0; i < size; i++)
+                {
+                    letter += it.Current;
+                    if( i != size - 1)
+                    {
+                        it.MoveNext();
+                    }
+                }
+                int letterASCII = 0; 
+                
+                for (int i = 0; i < letter.Length; i++)
+                {
+                    letterASCII += (int)((letter[i]-'0') * (Math.Pow(10, letter.Length-i-1))); //Ascii code of the letter, Multiplied by its unit (i.e Hundred and things like that guys smh)
+                }
+
+                letterASCII += '0';
+                ans += (char)letterASCII;
+            }
+            return ans;
+        }
+      
         public override bool Equals(object obj)//O(Max(n1,n2))
         {
             if (obj is BigInt secondObj)//O(Max(n1,n2))
@@ -318,9 +375,43 @@ namespace bigInteger
                 return p1 == null && p2 == null;//O(1) // Both lists fully traversed
             }
             return false;//O(1)
+
         }
 
         public static BigInt encrypt(BigInt num, BigInt key, BigInt mod)//O(n ^ 1.58)
+        {
+          if (num.arr.Count == 1 && num.arr.Last.Value == 0)
+            {
+                return new BigInt("0");
+            }
+            if (key.arr.Count == 1 && key.arr.Last.Value == 0)
+            {
+                return new BigInt("1");
+            }
+            BigInt result = new BigInt();//O(1)
+            if (key.isEven()) //O(n ^ 1.58)
+            {
+                BigInt div = divide(key, new BigInt("2")).Quotient;
+
+                result = encrypt(num, div, mod);//T(N)= T(N/2) + O(n^1.58) O(n^1.58) .5<c 0.5>E>0
+
+                BigInt temp = Multiplication(result, result);//O(n^1.58)
+                result = divide(temp, mod).Remainder;//O(n)
+            }
+            else //O(n ^ 1.58)
+            {
+                result = divide(num, mod).Remainder;//O(n)
+                BigInt middleValue = encrypt(num, subtract(key, new BigInt("1")), mod);
+                middleValue = Multiplication(result, middleValue);//O(n^1.58)
+                middleValue = divide(middleValue, mod).Remainder;//O(n)
+                result = divide(middleValue, mod).Remainder;//O(n)
+            }
+
+
+            return (divide(sum(result, mod), mod).Remainder);//O(n)+O(n) = //O(n)
+        }
+
+        public static BigInt decrypt(BigInt num, BigInt key, BigInt mod)
         {
             if (num.arr.Count == 1 && num.arr.Last.Value == 0)
             {
@@ -390,66 +481,42 @@ namespace bigInteger
             return false;//O(1)
         }
 
-        //public static BigInt ModulusFactor(BigInt n)
-        //{
-        //    BigInt p;
-        //    BigInt q;
-        //    BigInt phi;
-        //    for (BigInt i = new BigInt("2"); Multiplication(i, i) <= n; i = sum(i, new BigInt("1")))
-        //    {
-        //        if (divide(n, i).Remainder.arr.Last.Value == 0)
-        //        {
-        //            q = i;
-        //            p = divide(n, i).Quotient;
-        //            phi = Multiplication(subtract(q, new BigInt("1")), subtract(p, new BigInt("1")));
-        //            RemoveFrontZeros(ref phi);
-        //            return phi;
-        //        }
-        //    }
-        //    return new BigInt("1");
-        //}
 
         public static BigInt generateprime()
-
         {
             int digits = 3;
             // Define the range for the prime number
             BigInt lowerBound = lowerbound(digits);//O(1)
             BigInt upperBound = upperbound(digits);//O(1)
-
             while (true)
             {
-                // Generate a random odd number
-                BigInt candidate = GenerateRandomBigInt(lowerBound, upperBound);
+                BigInt num = GenerateRandomBigInt(lowerBound, upperBound);
+                if (num.isEven())
+                    num = BigInt.sum(num, new BigInt("1"));
 
-                // Make sure it's odd
-                if (candidate.isEven())
-                    candidate = BigInt.sum(candidate, new BigInt("1"));
-
-                // Perform primality test
-                if (IsPrime(candidate))
-                    return candidate;
+                if (IsPrime(num))
+                    return num;
             }
         }
 
         private static BigInt GenerateRandomBigInt(BigInt min, BigInt max)//O(n)
         {
+
         
             string maxStr = max.ToString();//O(1)
             int maxDigits = maxStr.Length;//O(1)
-
             while (true)
             {
                 string randomValue = "";//O(1)
-
                 randomValue += (char)('0' + rand.Next(1,10));//O(1)
+
 
                 for (int i = 1; i < maxDigits; i++)//O(1) max digit is constant max= 999
                 {
                     randomValue += (char)('0' + rand.Next(10));//O(1)
                 }
 
-                BigInt result = new BigInt(randomValue);//O(1)
+                BigInt result = new BigInt(randomValue);//O(N)
 
                 if (compare(result, min) >= 0 && compare(result, max) <= 0)//O(n)
                     return result;//O(1)
@@ -464,12 +531,9 @@ namespace bigInteger
             {
                 q = generateprime();
             }
-
             BigInt n = Multiplication(p, q);
             BigInt phi = Multiplication(subtract(p, new BigInt("1")), subtract(q, new BigInt("1")));
             BigInt e = SelectPublicExponent(phi);
-    //        BigInt d = ModInverse(e, phi);
-
             return (n, e);
         }
 
@@ -492,12 +556,11 @@ namespace bigInteger
 
         static bool IsPrime(BigInt number)
         {
+
             if (compare(number, new BigInt("2")) < 0) return false;//O(n)
             if (BigInt.Equals(number, new BigInt("2")) || BigInt.Equals(number, new BigInt("3"))) return true; //O(n)
             if (number.isEven()) return false;//O(1)
-
-
-            for (BigInt i = new BigInt("3"); Multiplication(i, i) <= number; i = sum(i, new BigInt("2")))
+            for (BigInt i = new BigInt("3"); Multiplication(i, i) <= number; i = sum(i, new BigInt("1")))
             {
                 if (divide(number, i).Remainder.arr.Last.Value == 0)//O(n)
                     return false;//O(1)
@@ -505,7 +568,7 @@ namespace bigInteger
 
             return true;
         }
-        //phi&&e
+        //for phi and e
         private static BigInt GCD(BigInt a, BigInt b)
         {
             while (b.ToString() != "0")
@@ -519,28 +582,15 @@ namespace bigInteger
 
         private static BigInt SelectPublicExponent(BigInt phi)
         {
-            // Common choices for e include 3, 17, and 65537
-            BigInt[] commonValues = {
-                new BigInt("3"),
-                new BigInt("17"),
-                new BigInt("65537")
-            };
 
-            // Try common values first
-            foreach (BigInt candidate in commonValues)
-            {
-                if (BigInt.compare(candidate, phi) < 0 && GCD(candidate, phi).ToString() == "1")
-                    return candidate;
-            }
+            BigInt e = new BigInt("3");
 
-            // If none work, find another suitable value
-            BigInt e = new BigInt("65537");
             while (BigInt.compare(e, phi) < 0)
             {
                 if (GCD(e, phi).ToString() == "1")
                     return e;
 
-                e = BigInt.sum(e, new BigInt("2"));
+                e = BigInt.sum(e, new BigInt("1"));
             }
 
             throw new Exception("Failed to find a suitable public exponent.");

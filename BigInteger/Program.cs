@@ -11,10 +11,9 @@ namespace bigInteger
             int before = System.Environment.TickCount;
             Console.WriteLine("Before run: " + before);
 
-            BigInt Prime = new BigInt();
-            Prime = BigInt.generateprime();
+            BigInt z = BigInt.encrypt(Message,key,mod);
 
-            Console.WriteLine(Prime.ToString());
+            Console.WriteLine(z.ToLetters());
 
             int after = System.Environment.TickCount;
             Console.WriteLine("After run: " + after);
