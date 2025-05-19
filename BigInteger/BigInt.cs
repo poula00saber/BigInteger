@@ -199,7 +199,7 @@ namespace bigInteger
         }
 
 
-        public static (BigInt Quotient, BigInt Remainder) divide(BigInt num, BigInt divisor)//O(n)
+        public static (BigInt Quotient, BigInt Remainder) divide(BigInt num, BigInt divisor)//O(nlog(n))
         {
 
             if (compare(num, divisor) == -1)//O(Max(n1,n2))
@@ -382,7 +382,7 @@ namespace bigInteger
 
         }
 
-        public static BigInt encrypt(BigInt num, BigInt key, BigInt mod)//O(n ^ 1.58)
+        public static BigInt encrypt(BigInt num, BigInt key, BigInt mod)//O(n ^ 2.58)
         {
             if (num.arr.Count == 1 && num.arr.Last.Value == 0)
             {
@@ -402,10 +402,10 @@ namespace bigInteger
                 BigInt temp = Multiplication(result, result);//O(n^1.58)
                 result = divide(temp, mod).Remainder;//O(n)
             }
-            else //O(n ^ 1.58)
+            else //O(n ^ 2.58)
             {
                 result = divide(num, mod).Remainder;//O(n)
-                BigInt middleValue = encrypt(num, subtract(key, new BigInt("1")), mod);
+                BigInt middleValue = encrypt(num, subtract(key, new BigInt("1")), mod);//T(N)=T(n-1)+O(n^1.58)  = O(n^2.58)
                 middleValue = Multiplication(result, middleValue);//O(n^1.58)
                 middleValue = divide(middleValue, mod).Remainder;//O(n)
                 result = divide(middleValue, mod).Remainder;//O(n)
@@ -486,7 +486,7 @@ namespace bigInteger
         }
 
 
-
+       // can't be properly determined but since the input is so small it tends to O(1)
         //?? O(infinity) and sigma(n^2.08)
         public static BigInt generateprime()
         {
