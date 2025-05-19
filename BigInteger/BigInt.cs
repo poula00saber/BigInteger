@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 namespace bigInteger
 {
-
+    //idk
     public class BigInt
     {
         public LinkedList<int> arr;
