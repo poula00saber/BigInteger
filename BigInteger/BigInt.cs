@@ -322,14 +322,13 @@ namespace bigInteger
 
         public static BigInt encrypt(BigInt num, BigInt key, BigInt mod)//O(n ^ 1.58)
         {
-            if (num.arr.Last.Value == 0) //O(1)
+            if (num.arr.Count == 1 && num.arr.Last.Value == 0)
             {
-                return new BigInt("0");//O(1)
+                return new BigInt("0");
             }
-
-            if(key.arr.Last.Value == 0)//O(1)
+            if (key.arr.Count == 1 && key.arr.Last.Value == 0)
             {
-                return new BigInt("1");//O(1)
+                return new BigInt("1");
             }
             BigInt result = new BigInt();//O(1)
             if (key.isEven()) //O(n ^ 1.58)
@@ -494,14 +493,14 @@ namespace bigInteger
         static bool IsPrime(BigInt number)
         {
             if (compare(number, new BigInt("2")) < 0) return false;//O(n)
-            if (BigInt.Equals(number, new BigInt("2")) || BigInt.Equals(number, new BigInt("3"))) return true;
-            if (number.isEven()) return false;
+            if (BigInt.Equals(number, new BigInt("2")) || BigInt.Equals(number, new BigInt("3"))) return true; //O(n)
+            if (number.isEven()) return false;//O(1)
 
 
             for (BigInt i = new BigInt("3"); Multiplication(i, i) <= number; i = sum(i, new BigInt("2")))
             {
-                if (divide(number, i).Remainder.arr.Last.Value == 0)
-                    return false;
+                if (divide(number, i).Remainder.arr.Last.Value == 0)//O(n)
+                    return false;//O(1)
             }
 
             return true;
