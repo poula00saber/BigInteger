@@ -539,8 +539,8 @@ namespace bigInteger
                 q = generateprime();//O(n^2.08)
             }
             BigInt n = Multiplication(p, q);//O(n^1.58)
-            BigInt x = Multiplication(p, q);//O(n^1.58)
-            BigInt y = subtract(p, new BigInt("1"));//O(n)
+            BigInt x = subtract(p, new BigInt("1"));//O(n)
+            BigInt y = subtract(q, new BigInt("1"));//O(n)
             BigInt phi = Multiplication(x, y);//O(n^1.58)
             BigInt e = SelectPublicExponent(phi);//O(n^2(log(n))^2)
             return (n, e);//O(1)
