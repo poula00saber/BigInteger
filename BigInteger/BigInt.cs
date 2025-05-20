@@ -1,14 +1,12 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 namespace bigInteger
 {
-    //idk
     public class BigInt
     {
-        public LinkedList<int> arr;
-        private static Random rand = new Random();
+        public LinkedList<int> arr;//O(1) 
+        private static Random rand = new Random();//O(1)
 
         //O(n)
         public BigInt(string val)
@@ -23,45 +21,34 @@ namespace bigInteger
             }
 
         }
-        public BigInt(string val, string mode) //O(N^2)
+        public BigInt(string val, string mode) //O(N)
         {
             arr = new LinkedList<int>(); //O(1)
 
             foreach (char c in val) //O(N)
             {
-                string str = (c - '0').ToString(); //O(N)
-                arr.AddLast(str.Length);
-                foreach (char n in str) //O(1), The length of the string is very small at most 3 digits so it's 
+                string str = (c - '0').ToString(); //O(1), at most 2 to 3 digits so it tends to O(1)
+                arr.AddLast(str.Length);//O(1)
+                foreach (char n in str) //O(1), The length of the string is very small at most 3 digits so it tends to O(1)
                 {
-                    int num = n - '0';
-                    arr.AddLast(num);
+                    int num = n - '0'; //O(1)
+                    arr.AddLast(num); //O(1)
                 }
             }
         }
 
 
-        public BigInt()
+        public BigInt()//O(1)
         {
-            arr = new LinkedList<int>();
+            arr = new LinkedList<int>();//O(1)
         }
+
         public bool isEven()//Function IsEven  O(1)
 
         {
-
             return (this.arr.Last != null && this.arr.Last.Value % 2 == 0); //O(1)
         }
-        //O(n) RemoveFrontZeros
-        //public static void RemoveFrontZeros( BigInt n)
-        //{
-        //    LinkedListNode<int> p = n.arr.First;//O(1)
-        //    while (n.arr.Count > 1 && n.arr.First.Value == 0) ////O(n)
-        //    {
-        //        n.arr.RemoveFirst(); //O(1)
-
-        //    }
-
-        //}
-
+ 
         public static BigInt Power(BigInt x, BigInt n) // O(n^1.58)
         {
             if (n.arr.Count == 0 || n.arr.Last.Value == 0)
@@ -73,29 +60,29 @@ namespace bigInteger
             {
 
                 BigInt div = divide(n, new BigInt("2")).Quotient; //O(n)
-                BigInt half = Power(x, div); //T(N)= T(N/2) + O(n^1.58) O(n^1.58) .5<c 0.5>E>0
+                BigInt half = Power(x, div); //T(N)= T(N/2) + O(n^1.58),Using master method case 3 =>  O(n^1.58), (0.5)^1.58 <c AND 0.58>E>0
                 half.removeLeadingZeroes();//O(n)
 
                 BigInt result = (Multiplication(half, half));//O(n^1.58)
-                return result;
+                return result;//O(1)
             }
             else
             {
-                BigInt result = Multiplication(x, Power(x, subtract(n, new BigInt("1"))));
-                result.removeLeadingZeroes();
+                BigInt result = Multiplication(x, Power(x, subtract(n, new BigInt("1"))));//O(N^1.58) + O(N^1.58) + O(N) = O(N^1.58)
+                result.removeLeadingZeroes();//O(N) 
 
-                return result;
+                return result;//O(1)
             }
 
         }
 
         public static BigInt Multiplication(BigInt f, BigInt s)  // O(n^1.58)
         {
-            //O(1)
+          
             if (f.arr.Count == 1 && f.arr.First.Value == 0 ||
-           s.arr.Count == 1 && s.arr.First.Value == 0)
+                s.arr.Count == 1 && s.arr.First.Value == 0)//O(1)
             {
-                return new BigInt("0");//O(1)
+                return new BigInt("0");//O(N)
             }
             //O(1)
             if (f.arr.Count == 1 && s.arr.Count == 1)
@@ -103,7 +90,6 @@ namespace bigInteger
                 Int128 product = f.arr.First.Value * s.arr.First.Value;//O(1)
                 return new BigInt(product.ToString());//O(1)
             }
-
 
             int n = Math.Max(f.arr.Count, s.arr.Count);//O(1)
 
@@ -210,7 +196,10 @@ namespace bigInteger
                 BigInt remainder = new BigInt();//O(1)
                 BigInt s = sum(divisor, divisor);//O(n)
 
-                (quotient, remainder) = divide(num, s); //T(N) = (N/2) + //O(n)  n/2< cn case 3  // 2* divisor = n/2
+                //T(N) = T(N/2) + O(N) ,  Using tree method => Number of Levels = log(N) , Complexity per level = O(N), BaseCase complexity = O(N)
+                //Sum(i => Log(N)-1) (N/(2^i)) = Nlog(N)
+                (quotient, remainder) = divide(num, s); 
+               
                 quotient = sum(quotient, quotient);//O(n)
                 if (compare(remainder, divisor) == -1)//O(n)
                 {
@@ -247,10 +236,11 @@ namespace bigInteger
 
             }
         }
-        public static BigInt subtract(BigInt x, BigInt y)//O(n)
+        public static BigInt subtract(BigInt x, BigInt y)//O(N)
         {
 
-            if (compare(x, y) == 0) return new BigInt("0");//O(Max(y,x))
+            if (compare(x, y) == 0) //O(Max(n1,n2))
+                return new BigInt("0");//O(N)
 
 
             LinkedListNode<int> num1 = x.arr.Last;//O(1)
@@ -310,25 +300,26 @@ namespace bigInteger
             }
             return this;//O(1)
         }
-
-        override public String ToString()//O(n)
+        //O(n)
+        override public String ToString()
         {
-            string ans = "";
+            string ans = "";//O(1)
+            //O(N)
             foreach (int n in arr)
             {
-                ans += n;
+                ans += n;//O(1)
             }
-            return ans;
+            return ans;//O(1)
         }
 
 
         //O(nlog(n))
         public String ToLetters()
         {
-            LinkedList<int>.Enumerator it = arr.GetEnumerator();
+            LinkedList<int>.Enumerator it = arr.GetEnumerator();//O(log(N))
             string ans = "";//O(1)
 
-
+            //Body * Iterations = log(n) * n  = O(nlog(n))
             while (it.MoveNext())//O(n)
             {
                 int size = it.Current;//O(1)
@@ -346,7 +337,7 @@ namespace bigInteger
                 int letterASCII = 0;//O(1)
 
                 //O(log n) 
-                for (int i = 0; i < letter.Length; i++)//O(1)
+                for (int i = 0; i < letter.Length; i++)//O(1), letter size can't go above 3 , N <=3 so it tends to O(1)
                 {
                     //O(logn) built in function
                     letterASCII += (int)((letter[i] - '0') * (Math.Pow(10, letter.Length - i - 1))); //Ascii code of the letter, Multiplied by its unit (i.e Hundred and things like that guys smh)
@@ -384,68 +375,66 @@ namespace bigInteger
 
         public static BigInt encrypt(BigInt num, BigInt key, BigInt mod)//O(n ^ 2.58)
         {
-            if (num.arr.Count == 1 && num.arr.Last.Value == 0)
+            if (num.arr.Count == 1 && num.arr.Last.Value == 0)//O(1)
             {
-                return new BigInt("0");
+                return new BigInt("0");//O(N)
             }
-            if (key.arr.Count == 1 && key.arr.Last.Value == 0)
+            if (key.arr.Count == 1 && key.arr.Last.Value == 0)//O(1)
             {
-                return new BigInt("1");
+                return new BigInt("1");//O(N)
             }
             BigInt result = new BigInt();//O(1)
-            if (key.isEven()) //O(n ^ 1.58)
-            {
-                BigInt div = divide(key, new BigInt("2")).Quotient;
 
-                result = encrypt(num, div, mod);//T(N)= T(N/2) + O(n^1.58) O(n^1.58) .5<c 0.5>E>0
+            if (key.isEven())//O(!)
+            {
+                BigInt div = divide(key, new BigInt("2")).Quotient;//nLog(n)
+
+                result = encrypt(num, div, mod);//T(N)= T(N/2) + O(n^1.58), Using master method Case 3 => O(n^1.58) (0.5)^1.58 < c < 1 and 0.58 > E > 0
 
                 BigInt temp = Multiplication(result, result);//O(n^1.58)
                 result = divide(temp, mod).Remainder;//O(n)
             }
-            else //O(n ^ 2.58)
+            else
             {
                 result = divide(num, mod).Remainder;//O(n)
-                BigInt middleValue = encrypt(num, subtract(key, new BigInt("1")), mod);//T(N)=T(n-1)+O(n^1.58)  = O(n^2.58)
+                BigInt middleValue = encrypt(num, subtract(key, new BigInt("1")), mod); // T(N) = T(N-1) + O(N^1.58), T(1) = 1, Using tree method Number of levels = N, Complexity = Sum from 1 to N-1 (N^1.58 - i) = O(N^2.58)
                 middleValue = Multiplication(result, middleValue);//O(n^1.58)
                 middleValue = divide(middleValue, mod).Remainder;//O(n)
                 result = divide(middleValue, mod).Remainder;//O(n)
             }
-
-
-            return (divide(sum(result, mod), mod).Remainder);//O(n)+O(n) = //O(n)
+            return (divide(sum(result, mod), mod).Remainder);//O(nLog(N)))
         }
 
         public static BigInt decrypt(BigInt num, BigInt key, BigInt mod)
         {
-            if (num.arr.Count == 1 && num.arr.Last.Value == 0)
+            if (num.arr.Count == 1 && num.arr.Last.Value == 0)//O(1)
             {
-                return new BigInt("0");
+                return new BigInt("0");//O(N)
             }
-            if (key.arr.Count == 1 && key.arr.Last.Value == 0)
+            if (key.arr.Count == 1 && key.arr.Last.Value == 0)//O(1)
             {
-                return new BigInt("1");
+                return new BigInt("1");//O(N)
             }
             BigInt result = new BigInt();//O(1)
-            if (key.isEven()) //O(n ^ 1.58)
-            {
-                BigInt div = divide(key, new BigInt("2")).Quotient;
 
-                result = encrypt(num, div, mod);//T(N)= T(N/2) + O(n^1.58) O(n^1.58) .5<c 0.5>E>0
+            if (key.isEven())//O(!)
+            {
+                BigInt div = divide(key, new BigInt("2")).Quotient;//nLog(n)
+
+                result = encrypt(num, div, mod);//T(N)= T(N/2) + O(n^1.58), Using master method Case 3 => O(n^1.58) (0.5)^1.58 < c < 1 and 0.58 > E > 0
 
                 BigInt temp = Multiplication(result, result);//O(n^1.58)
                 result = divide(temp, mod).Remainder;//O(n)
             }
-            else //O(n ^ 1.58)
+            else 
             {
                 result = divide(num, mod).Remainder;//O(n)
-                BigInt middleValue = encrypt(num, subtract(key, new BigInt("1")), mod);
+                BigInt middleValue = encrypt(num, subtract(key, new BigInt("1")), mod); // T(N) = T(N-1) + O(N^1.58), T(1) = 1, Using tree method Number of levels = N, Complexity = Sum from 1 to N-1 (N^1.58 - i) = O(N^2.58)
                 middleValue = Multiplication(result, middleValue);//O(n^1.58)
                 middleValue = divide(middleValue, mod).Remainder;//O(n)
                 result = divide(middleValue, mod).Remainder;//O(n)
             }
-
-
-            return (divide(sum(result, mod), mod).Remainder);//O(n)+O(n) = //O(n)
+            return (divide(sum(result, mod), mod).Remainder);//O(nLog(N)))
         }
 
         //O(n)
@@ -486,27 +475,26 @@ namespace bigInteger
         }
 
 
-       // can't be properly determined but since the input is so small it tends to O(1)
-        //?? O(infinity) and sigma(n^2.08)
+        // O(n^2.08)
         public static BigInt generateprime()
         {
-            Dictionary<BigInt, bool> isChecked= new Dictionary<BigInt, bool>();//O(1)
+            Dictionary<BigInt, bool> isChecked = new Dictionary<BigInt, bool>();//O(1)
             int digits = 3;//O(1)
             // Define the range for the prime number
             BigInt lowerBound = lowerbound(digits);//O(1)
             BigInt upperBound = upperbound(digits);//O(1)
+            //Loop iterations can't be properly determined but since the input is so small (n = 3) it tends to O(1)
+            //Iteratons * Body = 1 * n^2.08 = O(n^2.08)
             while (true)
             {
-
                 BigInt num = GenerateRandomBigInt(lowerBound, upperBound);//O(n) 
-
                 if (isChecked[num] == true) //O(1)
                 {
                     continue;//O(1)
                 }
                 else
                 {
-                    isChecked[num]=true; //O(1)
+                    isChecked[num] = true; //O(1)
                     if (num.isEven()) //O(1)
                         num = BigInt.sum(num, new BigInt("1"));//O(n)
 
@@ -520,7 +508,7 @@ namespace bigInteger
         {
 
 
-            string maxStr = max.ToString();//O(1)
+            string maxStr = max.ToString();//O(N)
             int maxDigits = maxStr.Length;//O(1)
             while (true)
             {
@@ -541,25 +529,25 @@ namespace bigInteger
         }
 
 
-        //sigma(n^2.08)
+        //O(n^2.08)
         public static (BigInt n, BigInt e) GeneratePublicKey(int digitSize)
         {
-            BigInt p = generateprime();//sigma(n^2.08)
-            BigInt q = generateprime();//sigma(n^2.08)
+            BigInt p = generateprime();//O(n^2.08)
+            BigInt q = generateprime();//O(n^2.08)
             while (BigInt.Equals(p, q))//O(N)
             {
-                q = generateprime();//sigma(n^2.08)
+                q = generateprime();//O(n^2.08)
             }
             BigInt n = Multiplication(p, q);//O(n^1.58)
             BigInt x = Multiplication(p, q);//O(n^1.58)
             BigInt y = subtract(p, new BigInt("1"));//O(n)
             BigInt phi = Multiplication(x, y);//O(n^1.58)
-            BigInt e = SelectPublicExponent(phi);//O(n (log(n))^2)
-            return (n, e);
+            BigInt e = SelectPublicExponent(phi);//O(n^2(log(n))^2)
+            return (n, e);//O(1)
         }
 
 
-        public static BigInt lowerbound(int digits)//O(1)
+        public static BigInt lowerbound(int digits)//O(1), digits is a constant of 3
         {
             string value = "1";//O(1)
             for (int i = 1; i < digits; i++)//O(1)
@@ -567,7 +555,7 @@ namespace bigInteger
             return new BigInt(value);//O(1)
         }
 
-        public static BigInt upperbound(int digits)//O(1)
+        public static BigInt upperbound(int digits)//O(1), digits is a constant of 3 
         {
             string value = "";//O(1)
             for (int i = 0; i < digits; i++)//O(1)
@@ -578,9 +566,12 @@ namespace bigInteger
         static bool IsPrime(BigInt number)
         {
 
-            if (compare(number, new BigInt("2")) < 0) return false;//O(n)
-            if (BigInt.Equals(number, new BigInt("2")) || BigInt.Equals(number, new BigInt("3"))) return true; //O(n)
-            if (number.isEven()) return false;//O(1)
+            if (compare(number, new BigInt("2")) < 0) //O(N)
+                return false;//O(1)
+            if (BigInt.Equals(number, new BigInt("2")) || BigInt.Equals(number, new BigInt("3"))) //O(N)
+                return true; //O(1)
+            if (number.isEven()) //O(1)
+                return false;//O(1)
 
             //O(n^(1.58 + 0.5 )) = //O(n^2.08) 
             // root n (num of iterations) * O(n^1.58) (body)
@@ -603,7 +594,7 @@ namespace bigInteger
             {
                 // to string -> O(n)
 
-                BigInt temp = b;
+                BigInt temp = b; //O(1)
                 b = BigInt.divide(a, b).Remainder;//O(nlog(n))
                 a = temp;//O(1)
             }
@@ -616,16 +607,16 @@ namespace bigInteger
         {
 
             BigInt e = new BigInt("3");
-
+            //Number of iterations = N, Body = Nlog(n)^2
+            //O(N^2Log(n)^2)
             while (BigInt.compare(e, phi) < 0)//O(n)
             {
                 if (GCD(e, phi).ToString() == "1") //O(n (log(n))^2)
-                    return e;
+                    return e; //O(1)
 
                 e = BigInt.sum(e, new BigInt("1"));//O(n)
             }
-
-            throw new Exception("Failed to find a suitable public exponent.");
+            throw new Exception("Failed to find a suitable public exponent.");//O(1);
         }
     }
 }
