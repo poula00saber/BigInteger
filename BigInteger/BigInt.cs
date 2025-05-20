@@ -68,7 +68,7 @@ namespace bigInteger
             }
             else
             {
-                BigInt result = Multiplication(x, Power(x, subtract(n, new BigInt("1"))));//O(N^1.58) + O(N^1.58) + O(N) = O(N^1.58)
+                BigInt result = Multiplication(x, Power(x, subtract(n, new BigInt("1")))); // T(N) = T(N-1) + O(N^1.58), T(1) = 1, Using tree method Number of levels = N, Complexity = Sum from 1 to N-1 (N^1.58 - i) = O(N^2.58)
                 result.removeLeadingZeroes();//O(N) 
 
                 return result;//O(1)
@@ -488,13 +488,13 @@ namespace bigInteger
             while (true)
             {
                 BigInt num = GenerateRandomBigInt(lowerBound, upperBound);//O(n) 
-                if (isChecked[num] == true) //O(1)
+                if (isChecked.ContainsKey(num)) //O(1)
                 {
                     continue;//O(1)
                 }
                 else
                 {
-                    isChecked[num] = true; //O(1)
+                    isChecked.Add(num,true); //O(1)
                     if (num.isEven()) //O(1)
                         num = BigInt.sum(num, new BigInt("1"));//O(n)
 
@@ -523,7 +523,7 @@ namespace bigInteger
 
                 BigInt result = new BigInt(randomValue);//O(N)
 
-                if (compare(result, min) >= 0 && compare(result, max) <= 0)//O(n)
+               // if (compare(result, min) >= 0 && compare(result, max) <= 0)//O(n)
                     return result;//O(1)
             }
         }
